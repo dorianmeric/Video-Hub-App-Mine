@@ -71,28 +71,39 @@ const extractSingleFrameArgs = (
  * (if filmstrip not already present)
  *
  * @param pathToVideo          -- full path to the video file
- * @param duration             -- duration of clip
+ * @param duration             -- duration of clip // in seconds
  * @param screenshotHeight     -- height of screenshot in pixels
  * @param numberOfScreenshots  -- number of screenshots to extract
  * @param savePath             -- full path to file name and extension
  */
 const generateScreenshotStripArgs = (
   pathToVideo: string,
-  duration: number,
+  duration: number, // in seconds
   screenshotHeight: number,
   numberOfScreenshots: number,
-  savePath: string,
+  savePath: string, 
+  sourceHeight: number, 
+  sourceWidth:number,
 ): string[] => {
 
   let current = 0;
-  const totalCount = numberOfScreenshots;
+
+
+  // if the video is short, take a minimum of 10 screenshots
+  // if the video is long, take a screenshot every 30 secs.   (10 screenshot = 5 min)
+
+  //const totalCount = numberOfScreenshots;
+
+  const totalCount = Math.max(numberOfScreenshots, duration / 30);
+
   const step: number = duration / (totalCount + 1);
   const args: string[] = [];
+
   let allFramesFiltered = '';
   let outputFrames = '';
 
   // Hardcode a specific 16:9 ratio
-  const ssWidth: number = screenshotHeight * (16 / 9);
+  const ssWidth: number = screenshotHeight * (sourceWidth / sourceHeight);
 
   const fancyScaleFilter: string = scaleAndPadString(ssWidth, screenshotHeight);
 
@@ -253,6 +264,7 @@ export function extractAll(
   const fileHash:     string = currentElement.hash;
   const numOfScreens: number = currentElement.screens;
   const sourceHeight: number = currentElement.height;
+  const sourceWidth: number = currentElement.width;
 
   const thumbnailSavePath: string = path.normalize(screenshotFolder + '/thumbnails/' + fileHash + '.jpg');
   const filmstripSavePath: string = path.normalize(screenshotFolder + '/filmstrips/' + fileHash + '.jpg');
@@ -303,7 +315,7 @@ export function extractAll(
       } else {
 
         const ffmpegArgs: string [] = generateScreenshotStripArgs(
-          pathToVideo, duration, screenshotHeight, numOfScreens, filmstripSavePath
+          pathToVideo, duration, screenshotHeight, numOfScreens, filmstripSavePath, sourceHeight, sourceWidth
         );
 
         return spawn_ffmpeg_and_run(ffmpegArgs, maxRunTime.filmstrip, 'filmstrip');       // (5)
