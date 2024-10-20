@@ -65,7 +65,7 @@
       [ngClass]="{ 'meta-dark-mode': darkMode }"
       class="size"
     >
-      {{ video.resolution }}
+    {{ video.durationDisplay }} - {{ video.resolution }}
     </div>
 
     <div
@@ -76,7 +76,7 @@
           'showing-meta': showMeta
         }"
     >
-      {{ video.cleanName }}
+    {{ video.partialPath }} / {{ video.cleanName }}
       <div
         *ngIf="showMeta"
         class="fileSize"

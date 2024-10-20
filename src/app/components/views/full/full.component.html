@@ -24,10 +24,16 @@
     [ngStyle]="{
         height: _imgHeight + 'px',
         'background-image': 'url(' + fullFilePath + ')',
-        'background-position-x': '-' + (row * _imgHeight * 16 / 9) + 'px',
+        
         'background-size': 'auto ' + _imgHeight + 'px'
       }"
-  ></div>
+  >
+
+  <!--  'background-position-x': '-' + (row * _imgHeight *  video.width  /   video.height ) + 'px',  -->
+
+  <span *ngIf="showMeta" class="rez">{{ video.durationDisplay }} - {{ video.width }}x{{ video.height }}</span>
+
+</div>
 
   <app-icon
     *ngIf="video.selected"
@@ -41,9 +47,9 @@
     [ngStyle]="{ color: darkMode ? '#BBBBBB' : '#000000' }"
     class="title"
   >
-    {{ video.cleanName }}
+    <b>{{ video.partialPath }} / </b>{{ video.cleanName }} 
     <div class="fileSize" *ngIf="showMeta">
-      ({{ video.fileSizeDisplay }})
+      ({{ video.durationDisplay }}, {{ video.width }}x{{ video.height }}, {{ video.fileSizeDisplay }})
     </div>
   </span>
 

@@ -41,7 +41,7 @@
     [ngStyle]="{ color: darkMode ? '#BBBBBB' : '#000000' }"
     class="title"
   >
-    {{ video.cleanName }}
+    {{ video.partialPath }} / ({{ video.durationDisplay }} - {{ video.width }}x{{ video.height }}) {{ video.cleanName }} 
     <div class="fileSize" *ngIf="showMeta">
       ({{ video.fileSizeDisplay }})
     </div>

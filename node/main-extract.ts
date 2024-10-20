@@ -93,14 +93,14 @@ const generateScreenshotStripArgs = (
   // if the video is long, take a screenshot every 30 secs.   (10 screenshot = 5 min)
 
   //const totalCount = numberOfScreenshots;
-  const maxWidth : number = 7120; // hard-coded max horizontal resolution
+  const maxWidth : number = 12000; // hard-coded max horizontal resolution
 
   // Hardcode a specific 16:9 ratio
-  const ssWidth: number = screenshotHeight * (sourceWidth / sourceHeight);
+  const ssWidth: number = Math.floor( screenshotHeight * (sourceWidth / sourceHeight) );
 
-  const totalCount = Math.min( Math.max(numberOfScreenshots, duration / 30), maxWidth / ssWidth ); // between 10 and 40
+  const totalCount = Math.floor( Math.min( Math.max(numberOfScreenshots, duration / 30), maxWidth / ssWidth )); // between 10 and 40
 
-  const step: number = duration / (totalCount + 1);
+  const step: number = Math.floor(duration / (totalCount + 1));
   const args: string[] = [];
 
   let allFramesFiltered = '';
