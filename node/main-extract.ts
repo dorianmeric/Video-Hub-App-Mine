@@ -94,7 +94,7 @@ const generateScreenshotStripArgs = (
 
   //const totalCount = numberOfScreenshots;
 
-  const totalCount = Math.max(numberOfScreenshots, duration / 30);
+  const totalCount = Math.min( Math.max(numberOfScreenshots, duration / 30), 40); // between 10 and 40
 
   const step: number = duration / (totalCount + 1);
   const args: string[] = [];
@@ -105,7 +105,7 @@ const generateScreenshotStripArgs = (
   // Hardcode a specific 16:9 ratio
   const ssWidth: number = screenshotHeight * (sourceWidth / sourceHeight);
 
-  const fancyScaleFilter: string = scaleAndPadString(ssWidth, screenshotHeight);
+  const fancyScaleFilter: string = scaleAndPadString(ssWidth, screenshotHeight, false); // do not pad
 
   // make the magic filter
   while (current < totalCount) {
@@ -482,12 +482,15 @@ export function replaceThumbnailWithNewImage(
  * @param width
  * @param height
  */
-function scaleAndPadString(width: number, height: number): string {
+function scaleAndPadString(width: number, height: number, pad: boolean = true): string {
   // sweet thanks to StackExchange!
   // https://superuser.com/questions/547296/resizing-videos-with-ffmpeg-avconv-to-fit-into-static-sized-player
 
-  return 'scale=w=' + width + ':h=' + height + ':force_original_aspect_ratio=decrease,' +
-         'pad='     + width + ':'   + height + ':(ow-iw)/2:(oh-ih)/2';
+  if(pad) {
+    return 'scale=w=' + width + ':h=' + height + ':force_original_aspect_ratio=decrease,' + 'pad='     + width + ':'   + height + ':(ow-iw)/2:(oh-ih)/2';
+  } else {
+    return 'scale=w=' + width + ':h=' + height + ':force_original_aspect_ratio=decrease' 
+  }
 
 }
 
