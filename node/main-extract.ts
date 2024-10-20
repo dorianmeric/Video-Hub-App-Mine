@@ -93,8 +93,12 @@ const generateScreenshotStripArgs = (
   // if the video is long, take a screenshot every 30 secs.   (10 screenshot = 5 min)
 
   //const totalCount = numberOfScreenshots;
+  const maxWidth : number = 7120; // hard-coded max horizontal resolution
 
-  const totalCount = Math.min( Math.max(numberOfScreenshots, duration / 30), 40); // between 10 and 40
+  // Hardcode a specific 16:9 ratio
+  const ssWidth: number = screenshotHeight * (sourceWidth / sourceHeight);
+
+  const totalCount = Math.min( Math.max(numberOfScreenshots, duration / 30), maxWidth / ssWidth ); // between 10 and 40
 
   const step: number = duration / (totalCount + 1);
   const args: string[] = [];
@@ -102,8 +106,6 @@ const generateScreenshotStripArgs = (
   let allFramesFiltered = '';
   let outputFrames = '';
 
-  // Hardcode a specific 16:9 ratio
-  const ssWidth: number = screenshotHeight * (sourceWidth / sourceHeight);
 
   const fancyScaleFilter: string = scaleAndPadString(ssWidth, screenshotHeight, false); // do not pad
 
@@ -489,7 +491,7 @@ function scaleAndPadString(width: number, height: number, pad: boolean = true): 
   if(pad) {
     return 'scale=w=' + width + ':h=' + height + ':force_original_aspect_ratio=decrease,' + 'pad='     + width + ':'   + height + ':(ow-iw)/2:(oh-ih)/2';
   } else {
-    return 'scale=w=' + width + ':h=' + height + ':force_original_aspect_ratio=decrease' 
+    return 'scale=w=' + width + ':h=' + height + ':force_original_aspect_ratio=decrease,' + 'fillborders=left=2:right=2:mode=fixed'  ;
   }
 
 }
