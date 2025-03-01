@@ -3,7 +3,7 @@ import type { ScreenshotSettings, InputSources } from '../interfaces/final-objec
 export const GLOBALS: VhaGlobals = {
   angularApp: null,            // reference used to send messages back to Angular App
   currentlyOpenVhaFile: '',    // OFFICAL DECREE IN NODE WHICH FILE IS CURRENTLY OPEN !!!
-  debug: false,
+  debug: true,     // RUN THE .EXE with the option "--debug"
   demo: false,                 // update `package.json` version to `#.#.#-demo` when building the demo             <---- !!!
   hubName: 'untitled',         // in case user doesn't name their hub any name
   macVersion: false,           // auto updated by `main.ts`

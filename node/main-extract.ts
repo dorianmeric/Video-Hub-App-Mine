@@ -81,10 +81,11 @@ const generateScreenshotStripArgs = (
   duration: number, // in seconds
   screenshotHeight: number,
   numberOfScreenshots: number,
-  savePath: string, 
-  sourceHeight: number, 
+  savePath: string,
+  sourceHeight: number,
   sourceWidth:number,
 ): string[] => {
+  console.log("RUNNING generateScreenshotStripArgs() with args: path=" + pathToVideo + ", duration=" + duration + ", screenshotHeight=" + screenshotHeight + ", numberOfScreenshots=" + numberOfScreenshots);
 
   let current = 0;
 
@@ -98,7 +99,7 @@ const generateScreenshotStripArgs = (
   // Hardcode a specific 16:9 ratio
   const ssWidth: number = Math.floor( screenshotHeight * (sourceWidth / sourceHeight) );
 
-  const totalCount = Math.floor( Math.min( Math.max(numberOfScreenshots, duration / 30), maxWidth / ssWidth )); // between 10 and 40
+  const totalCount = Math.floor( Math.min( Math.max(numberOfScreenshots, duration / 30.0), maxWidth / ssWidth )); // between 10 and 40
 
   const step: number = Math.floor(duration / (totalCount + 1));
   const args: string[] = [];
@@ -109,6 +110,8 @@ const generateScreenshotStripArgs = (
 
   const fancyScaleFilter: string = scaleAndPadString(ssWidth, screenshotHeight, false); // do not pad
 
+  console.log("RUNNING generateScreenshotStripArgs() -- looping with totalCount=" + totalCount + ", step=" + step + "s");
+
   // make the magic filter
   while (current < totalCount) {
     const time = (current + 1) * step; // +1 so we don't pick the 0th frame
@@ -117,9 +120,13 @@ const generateScreenshotStripArgs = (
     outputFrames += '[' + current + ']';
     current++;
   }
+
+  console.log("Pushing to args...");
   args.push(
     '-frames', '1',
-    '-filter_complex', allFramesFiltered + outputFrames + 'hstack=inputs=' + totalCount,
+    '-filter_complex',  allFramesFiltered + outputFrames + 'hstack=inputs=' + totalCount,
+    "-update", "true",
+    "-y",
     savePath
   );
 
@@ -432,10 +439,10 @@ function setExtractionDurations(
   const sourceFactor = 1 + (sourceRatio * sourceRatio / 3); // square of ratio
 
   return {                                                                           // for me:
-    thumb:     500 * sourceFactor * thumbHeightFactor,                               // never above 800ms
-    filmstrip: 350 * sourceFactor * thumbHeightFactor * numOfScreens,                // rarely above 15s, but 4K 30screens took 50s
-    clip:      350 * sourceFactor * clipHeightFactor * clipSnippets * snippetLength, // rarely above 15s
-    clipThumb: 400 * clipHeightRatio,                                                // never above 600ms
+    thumb:     5000 * sourceFactor * thumbHeightFactor,                               // never above 800ms
+    filmstrip: 6000 * sourceFactor * thumbHeightFactor * numOfScreens,                // rarely above 15s, but 4K 30screens took 50s
+    clip:      3500 * sourceFactor * clipHeightFactor * clipSnippets * snippetLength, // rarely above 15s
+    clipThumb: 4000 * clipHeightRatio,                                                // never above 600ms
   };
 }
 
@@ -514,12 +521,19 @@ function spawn_ffmpeg_and_run(
     // Uncomment things in this method (and the `performance` import) to check how long extraction takes
     // const t0: number = performance.now();
 
+    console.log("------------------------------------------");
+    console.log("Running FFMPEG: " + ffmpegPath + " with args");
+    args.forEach((element) => console.log(element));
+    console.log("------------------------------------------");
+
+
+
     const ffmpeg_process = spawn(ffmpegPath, args);
 
     const killProcessTimeout = setTimeout(() => {
       if (!ffmpeg_process.killed) {
         ffmpeg_process.kill();
-        // console.log(description + ' KILLED EARLY');
+        console.log("?????????????????????????????????????????? " + description + ' KILLED EARLY');
         return resolve(false);
       }
     }, maxRunningTime);
@@ -528,12 +542,12 @@ function spawn_ffmpeg_and_run(
     // ALWAYS READ THE DATA, EVEN IF YOU DO NOTHING WITH IT
     ffmpeg_process.stdout.on('data', data => {
       if (GLOBALS.debug) {
-        console.log(data);
+        console.log("--------- stdout: " + data);
       }
     });
     ffmpeg_process.stderr.on('data', data => {
       if (GLOBALS.debug) {
-        console.log('grep stderr: ' + data);
+        console.log('||||||||||||||||||||||||| stderr: ' + data);
       }
     });
     ffmpeg_process.on('exit', () => {

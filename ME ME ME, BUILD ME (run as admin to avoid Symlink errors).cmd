@@ -1,5 +1,4 @@
 
-cd G:\code\NodeJS projects\Video-Hub-App
-g:
+cd /d C:\D\code\nodeJS\Video-Hub-App-Mine
 
 npm run electron
