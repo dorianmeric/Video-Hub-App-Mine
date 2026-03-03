@@ -1,0 +1,86 @@
+<div
+  [ngStyle]="{
+      height: elHeight + 'px',
+      width: elWidth + 'px'
+    }"
+  class="filmstrip-container"
+  [ngClass]="{ 'compact-margins': compactView }"
+>
+
+  <div
+    class="video-box"
+    [ngStyle]="{ height: imgHeight + 'px' }"
+  >
+    <app-icon
+      *ngIf="clip.selected"
+      class="selected"
+      [icon]="'icon-show-more-info'"
+    ></app-icon>
+    <span *ngIf="showMeta" class="time">{{ clip.durationDisplay }}</span>
+    <span *ngIf="showMeta" class="rez">{{ clip.resolution }}</span>
+
+    <!-- Display similarity score -->
+    <span *ngIf="clip.similarityScore" class="similarity-score">
+      {{ clip.similarityScore | number:'1.0-0' }}% Similar
+    </span>
+
+    <!-- ========================== regular view ========================== -->
+    <video
+      *ngIf="noError && !autoplay"
+      [src]="pathToVideo"
+      [poster]="sanitizer.bypassSecurityTrustUrl(poster)"
+      [ngStyle]="{ 'height': imgHeight + 'px' }"
+      (click)="   handleClick($event)"
+      (dblclick)="handleClick($event, true)"
+      (contextmenu)="rightClick.emit({ mouseEvent: $event, item: clip })"
+      class="screencap"
+      [volume]="forceMute ? 0 : 1"
+      onmouseover="this.play().catch((err) => {this.load()})"
+      (mouseout)="stopPreview($event)"
+      loop
+    ></video>
+
+    <!-- ========================== AUTOPLAY view ========================== -->
+    <video
+      *ngIf="noError && autoplay && appInFocus"
+      [src]="pathToVideo + '#t=' + clip.clipTimestamp + ',' + (clip.clipTimestamp + 5)"
+      [poster]="sanitizer.bypassSecurityTrustUrl(poster)"
+      [ngStyle]="{ 'height': imgHeight + 'px' }"
+      (click)="   handleClick($event)"
+      (dblclick)="handleClick($event, true)"
+      (contextmenu)="rightClick.emit({ mouseEvent: $event, item: clip })"
+      class="screencap"
+      [volume]="forceMute ? 0 : 1"
+      onmouseover="this.muted = false;"
+      onmouseout="this.muted = true;"
+      onloadstart="this.muted = true;"
+      onloadeddata="setTimeout(() => { this.play(); }, Math.floor(Math.random() * 500))"
+      loop
+      autoplay
+    ></video>
+
+  </div>
+
+  <!-- ================================= TEXT ================================= -->
+
+  <span
+    *ngIf="showMeta"
+    [ngClass]="{ 'larger-font': largerFont }"
+    [ngStyle]="{ color: darkMode ? '#BBBBBB' : '#000000' }"
+    class="title"
+  >
+    {{ clip.cleanName }}
+    <div class="fileSize" *ngIf="showMeta">
+      {{ showMeta ? '(' + clip.fileSizeDisplay + ')' : '' }}
+    </div>
+  </span>
+
+  <app-icon
+    class="sheet-icon"
+    [icon]="'icon-show-thumbnails'"
+    (click)="sheetClick.emit()"
+    [ngStyle]="{
+      'opacity': (this.hover ? 1 : 0)
+    }"></app-icon>
+
+</div>

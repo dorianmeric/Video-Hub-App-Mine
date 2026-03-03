@@ -20,6 +20,9 @@ import type { Stats } from 'fs';
 import type { FinalObject, ImageElement, ScreenshotSettings, InputSources, ResolutionString } from '../interfaces/final-object.interface';
 import { NewImageElement } from '../interfaces/final-object.interface';
 import { startFileSystemWatching, resetWatchers } from './main-extract-async';
+import { extractKeyframesForVisualSimilarity } from './visual-similarity-extract';
+import { generatePerceptualHash } from './visual-similarity-hash';
+import { visualSimilarityIndex, ClipMetadata } from './visual-similarity-index';
 
 interface ResolutionMeta {
   label: ResolutionString;
@@ -481,16 +484,44 @@ export function extractMetadataAsync(
           imageElement.fileSize  = fileStat.size;
           imageElement.height    = origHeight;
           imageElement.mtime     = Math.round(fileStat.mtimeMs);
-          imageElement.screens   = computeNumberOfScreenshots(screenshotSettings, duration);
-          imageElement.width     = origWidth;
-          imageElement.fps       = realFps;
+            imageElement.screens   = computeNumberOfScreenshots(screenshotSettings, duration);
+            imageElement.width     = origWidth;
+            imageElement.fps       = realFps;
+ 
+            hashFileAsync(filePath, fileStat).then((hash) => {
+              imageElement.hash = hash;
+              resolve(imageElement);
+ 
+              // --- Background processing for visual similarity ---
+              Promise.resolve().then(async () => {
+                const tempKeyframeDir = path.join(
+                  GLOBALS.selectedOutputFolder,
+                  'vha-temp-keyframes-indexing',
+                  imageElement.hash
+                );
 
-          hashFileAsync(filePath, fileStat).then((hash) => {
-            imageElement.hash = hash;
-            resolve(imageElement);
+                const keyframes = await extractKeyframesForVisualSimilarity(
+                  filePath,
+                  tempKeyframeDir,
+                  5 // Extract a keyframe every 5 seconds
+                );
+
+                for (const keyframe of keyframes) {
+                  const perceptualHash = await generatePerceptualHash(keyframe.path);
+                  visualSimilarityIndex.addClip(BigInt('0b' + perceptualHash), {
+                    videoId: imageElement.hash,
+                    timestamp: keyframe.timestamp,
+                    keyframePath: keyframe.path,
+                  });
+                }
+                // Clean up temporary keyframe directory
+                fs.rmSync(tempKeyframeDir, { recursive: true, force: true });
+                console.log(`Indexed ${keyframes.length} clips for ${imageElement.fileName}`);
+              }).catch(err => console.error(`Error during background indexing for ${imageElement.fileName}:`, err));
+              // --- End background processing for visual similarity ---
+            });
+ 
           });
-
-        });
 
       }
     });

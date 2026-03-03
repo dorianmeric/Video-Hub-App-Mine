@@ -1003,6 +1003,8 @@
           [largerFont]="settingsButtons['fontSizeLarger'].toggled"
           [showMeta]="settingsButtons['showMoreInfo'].toggled"
 
+          (findVisualSimilar)="findVisualSimilarClips($event)"
+
           style="display: inline-block"
         ></app-clip-item>
       </ng-container>

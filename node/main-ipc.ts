@@ -11,6 +11,14 @@ import { SettingsObject } from '../interfaces/settings-object.interface';
 import { createDotPlsFile, writeVhaFileToDisk } from './main-support';
 import { replaceThumbnailWithNewImage } from './main-extract';
 import { closeWatcher, startWatcher, extractAnyMissingThumbs, removeThumbnailsNotInHub } from './main-extract-async';
+import { extractFrameAtTimestamp, extractKeyframesForVisualSimilarity } from './visual-similarity-extract';
+import { generatePerceptualHash } from './visual-similarity-hash';
+import { visualSimilarityIndex, ClipMetadata } from './visual-similarity-index';
+import {
+  VisualSimilaritySearchRequest,
+  VisualSimilaritySearchResponse,
+  VisualSimilarityClipResult
+} from '../interfaces/shared-interfaces';
 
 /**
  * Set up the listeners
@@ -20,6 +28,7 @@ import { closeWatcher, startWatcher, extractAnyMissingThumbs, removeThumbnailsNo
  * @param systemMessages
  */
 export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
+
 
   /**
    * Un-Maximize the window
@@ -357,6 +366,7 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
   /**
    * Close the window / quit / exit the app
    */
+
   ipc.on('close-window', (event, settingsToSave: SettingsObject, finalObjectToSave: FinalObject) => {
     // convert shortcuts map to object
     settingsToSave.shortcuts = <any>Object.fromEntries(settingsToSave.shortcuts);
@@ -370,23 +380,112 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
     }
 
     // TODO -- catch bug if user closes before selecting the output folder ?!??
-    fs.writeFile(path.join(GLOBALS.settingsPath, 'settings.json'), json, 'utf8', () => {
+    fs.writeFile(path.join(GLOBALS.settingsPath, 'settings.json'), json, 'utf8', async () => {
       if (finalObjectToSave !== null) {
 
-        writeVhaFileToDisk(finalObjectToSave, GLOBALS.currentlyOpenVhaFile, () => {
+        writeVhaFileToDisk(finalObjectToSave, GLOBALS.currentlyOpenVhaFile, async () => { // Make callback async
           try {
+            // Save visual similarity index
+            const vsIndexPath = GLOBALS.currentlyOpenVhaFile + '.vsindex';
+            const vsMetadataPath = GLOBALS.currentlyOpenVhaFile + '.vsmetadata.json';
+            await visualSimilarityIndex.save(vsIndexPath, vsMetadataPath);
+
             GLOBALS.readyToQuit = true;
             BrowserWindow.getFocusedWindow().close();
-          } catch {}
+          } catch (err) { console.error('Error saving visual similarity index on close:', err); }
         });
 
       } else {
         try {
+          // Save visual similarity index (even if finalObjectToSave is null, index might have changed)
+          const vsIndexPath = GLOBALS.currentlyOpenVhaFile + '.vsindex';
+          const vsMetadataPath = GLOBALS.currentlyOpenVhaFile + '.vsmetadata.json';
+          await visualSimilarityIndex.save(vsIndexPath, vsMetadataPath);
+
           GLOBALS.readyToQuit = true;
           BrowserWindow.getFocusedWindow().close();
-        } catch {}
+        } catch (err) { console.error('Error saving visual similarity index on close:', err); }
       }
     });
   });
+
+  ipc.on('visual-similarity-search-clips', async (event, request: VisualSimilaritySearchRequest) => {
+    try {
+      // Assuming GLOBALS.finalObject is populated when a VHA file is opened
+      const targetVideoElement = GLOBALS.finalObject.images.find(img => img.hash === request.videoId);
+
+      if (!targetVideoElement) {
+        event.sender.send('visual-similarity-clips-results', {
+          results: [],
+          error: 'Target video not found.'
+        } as VisualSimilaritySearchResponse);
+        return;
+      }
+
+      const fullVideoPath = path.join(
+        (GLOBALS.finalObject.inputDirs[targetVideoElement.inputSource] as InputSources[number]).path,
+        targetVideoElement.partialPath,
+        targetVideoElement.fileName
+      );
+
+      // Create a temporary directory for keyframes related to this request
+      const tempKeyframeDir = path.join(
+        GLOBALS.selectedOutputFolder, // Assuming this is the base for temporary files
+        'vha-temp-keyframes',
+        request.videoId + '_' + request.clipTimestamp
+      );
+
+      const tempKeyframePath = path.join(
+        tempKeyframeDir,
+        `temp_keyframe_${request.videoId}_${request.clipTimestamp}.jpg`
+      );
+
+      const frameExtracted = await extractFrameAtTimestamp(
+        fullVideoPath,
+        request.clipTimestamp,
+        tempKeyframePath,
+        360 // Default height
+      );
+
+      if (!frameExtracted) {
+        event.sender.send('visual-similarity-clips-results', {
+          results: [],
+          error: 'Failed to extract keyframe for target clip.'
+        } as VisualSimilaritySearchResponse);
+        return;
+      }
+
+      const targetHashString = await generatePerceptualHash(tempKeyframePath);
+      const targetHashBigInt = BigInt('0b' + targetHashString); // Convert binary string hash to BigInt
+
+      // Clean up temporary keyframe file
+      fs.unlinkSync(tempKeyframePath);
+
+      // Query the index for similar clips
+      const similarResults: VisualSimilarityClipResult[] = visualSimilarityIndex.querySimilar(
+        targetHashBigInt,
+        10 // Number of results to return
+      ).map(res => ({
+        videoId: res.videoId,
+        clipTimestamp: res.timestamp,
+        similarityScore: res.similarityScore,
+        keyframePath: res.keyframePath,
+      }));
+
+
+      event.sender.send('visual-similarity-clips-results', {
+        results: similarResults
+      } as VisualSimilaritySearchResponse);
+
+    } catch (error) {
+      console.error('Error in visual-similarity-search-clips:', error);
+      event.sender.send('visual-similarity-clips-results', {
+        results: [],
+        error: error.message || 'An unknown error occurred during visual similarity search.'
+      } as VisualSimilaritySearchResponse);
+    }
+  });
+
+
 
 }

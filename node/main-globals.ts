@@ -1,10 +1,11 @@
-import type { ScreenshotSettings, InputSources } from '../interfaces/final-object.interface';
+import type { FinalObject, ScreenshotSettings, InputSources } from '../interfaces/final-object.interface';
 
 export const GLOBALS: VhaGlobals = {
   angularApp: null,            // reference used to send messages back to Angular App
   currentlyOpenVhaFile: '',    // OFFICAL DECREE IN NODE WHICH FILE IS CURRENTLY OPEN !!!
   debug: true,     // RUN THE .EXE with the option "--debug"
   demo: false,                 // update `package.json` version to `#.#.#-demo` when building the demo             <---- !!!
+  finalObject: null, // Initialized to null, will be populated on hub load
   hubName: 'untitled',         // in case user doesn't name their hub any name
   macVersion: false,           // auto updated by `main.ts`
   readyToQuit: false,          // hack to quit gracefully
@@ -31,6 +32,7 @@ export interface VhaGlobals {
   currentlyOpenVhaFile: string;
   debug: boolean;
   demo: boolean;
+  finalObject: FinalObject;
   hubName: string;
   macVersion: boolean;
   readyToQuit: boolean;
@@ -42,3 +44,4 @@ export interface VhaGlobals {
   vhaFileVersion: number;
   winRef: any;
 }
+

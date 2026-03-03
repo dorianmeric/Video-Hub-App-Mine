@@ -70,6 +70,7 @@ import { TopComponent } from './components/top/top.component';
 import { ViewTagsComponent } from './components/tags-manual/view-tags.component';
 import { WelcomeComponent } from './components/modal/welcome.component';
 import { WizardComponent } from './components/wizard/wizard.component';
+import { VisualSimilarityClipItemComponent } from './components/visual-similarity-clip-item/visual-similarity-clip-item.component'; // New component
 
 // Pipes
 import { AlphabetizeSourceFoldersPipe } from './pipes/alphabetize-source-folders.pipe';
@@ -182,10 +183,7 @@ import { YearPipe } from './pipes/year.pipe';
     ViewTagsComponent,
     WelcomeComponent,
     WizardComponent,
-    WordFrequencyPipe,
-    WrapperPipe,
-    YearFilterPipe,
-    YearPipe,
+    VisualSimilarityClipItemComponent,
   ],
   imports: [
     // AnQrcodeModule, // TODO: enable and fix later!

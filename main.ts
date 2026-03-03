@@ -16,6 +16,7 @@ import { createTouchBar } from './node/main-touch-bar';
 import { setUpIpcForServer } from './node/server';
 import { setUpIpcMessages } from './node/main-ipc';
 import { sendFinalObjectToAngular, setUpDirectoryWatchers, upgradeToVersion3, writeVhaFileToDisk, parseAdditionalExtensions } from './node/main-support';
+import { visualSimilarityIndex } from './node/visual-similarity-index'; // Import visualSimilarityIndex
 
 // Interfaces
 import { FinalObject } from './interfaces/final-object.interface';
@@ -285,7 +286,7 @@ function getAngularToShutDown(): void {
  * Load the .vha2 file and send it to app
  * @param pathToVhaFile full path to the .vha2 file
  */
-function openThisDamnFile(pathToVhaFile: string): void {
+async function openThisDamnFile(pathToVhaFile: string): Promise<void> {
 
   resetAllQueues();
 
@@ -296,7 +297,7 @@ function openThisDamnFile(pathToVhaFile: string): void {
     userWantedToOpen = undefined;
   }
 
-  fs.readFile(pathToVhaFile, (err, data) => {
+  fs.readFile(pathToVhaFile, async (err, data) => { // Make the callback async
     if (err) {
       GLOBALS.angularApp.sender.send('show-msg-dialog', systemMessages.error, systemMessages.noSuchFileFound, pathToVhaFile);
       GLOBALS.angularApp.sender.send('please-open-wizard');
@@ -310,10 +311,17 @@ function openThisDamnFile(pathToVhaFile: string): void {
       GLOBALS.selectedOutputFolder = path.parse(pathToVhaFile).dir;
       GLOBALS.hubName = finalObject.hubName;
       GLOBALS.screenshotSettings = finalObject.screenshotSettings;
+      GLOBALS.finalObject = finalObject; // Set the global finalObject here
+
       upgradeToVersion3(finalObject);
       console.log('setting inputDirs');
       console.log(finalObject.inputDirs);
       GLOBALS.selectedSourceFolders = finalObject.inputDirs;
+
+      // Load visual similarity index
+      const vsIndexPath = pathToVhaFile + '.vsindex';
+      const vsMetadataPath = pathToVhaFile + '.vsmetadata.json';
+      await visualSimilarityIndex.load(vsIndexPath, vsMetadataPath);
 
       sendFinalObjectToAngular(finalObject, GLOBALS);
 
@@ -321,6 +329,7 @@ function openThisDamnFile(pathToVhaFile: string): void {
     }
   });
 }
+
 
 // =================================================================================================
 // Listeners for events from Angular

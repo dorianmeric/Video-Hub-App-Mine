@@ -1,6 +1,6 @@
-import type { TagEmission } from './../../../interfaces/shared-interfaces';
+import type { TagEmission, VisualSimilarityClipResult } from './../../../interfaces/shared-interfaces';
 import type { YearEmission} from './../components/views/details/details.component';
-import type { ImageElement } from './../../../interfaces/final-object.interface';
+import type { ImageClipElement, ImageElement } from './../../../interfaces/final-object.interface';
 import { Injectable } from '@angular/core';
 import type { DefaultScreenEmission, StarEmission } from '../components/sheet/sheet.component';
 
@@ -13,13 +13,14 @@ public finalArrayNeedsSaving = false;
 public forceStarFilterUpdate = true;
 public imageElements: ImageElement[] = [];
 public recentlyPlayed: ImageElement[] = [];
+public similarVideoClipElements: ImageClipElement[] = []; // New property for visual similarity results
 
 constructor() { }
 
 /**
-   * Update imageElements with emission of element
-   * @param emission
-   */
+ * Update imageElements with emission of element
+ * @param emission
+ */
   HandleEmission(emission: YearEmission | StarEmission | TagEmission | DefaultScreenEmission): void {
     const index: number = emission.index;
 
@@ -47,7 +48,7 @@ constructor() { }
     this.finalArrayNeedsSaving = true;
   }
 
-    /**
+  /**
    * Searches through the `finalArray` and updates the file name and display name
    * Should not error out if two files have the same name
    */
@@ -110,6 +111,26 @@ constructor() { }
     if (this.recentlyPlayed.length > 7) {
       this.recentlyPlayed.length = 7;
     }
+  }
+
+  /**
+   * Set the similar video clip elements returned from the visual similarity search.
+   * @param results - Array of VisualSimilarityClipResult
+   */
+  setSimilarVideoClipElements(results: VisualSimilarityClipResult[]): void {
+    this.similarVideoClipElements = []; // Clear previous results
+
+    results.forEach(result => {
+      const correspondingImageElement = this.imageElements.find(img => img.hash === result.videoId);
+      if (correspondingImageElement) {
+        this.similarVideoClipElements.push({
+          ...correspondingImageElement,
+          clipTimestamp: result.clipTimestamp,
+          similarityScore: result.similarityScore,
+          keyframePath: result.keyframePath,
+        });
+      }
+    });
   }
 
   private handleTagEmission(emission: TagEmission): void {

@@ -3,7 +3,7 @@
 >
 
   <div
-    *ngIf="!showRecentNotSimilar && !this.settingsButtons['hideSidebar'].toggled"
+    *ngIf="!showRecentNotSimilar && !this.settingsButtons['hideSidebar'].toggled && imageElementService.similarVideoClipElements.length === 0"
     class="most-similar-comment"
     @similarResultsText
   >
@@ -14,6 +14,7 @@
   </div>
 
   <app-thumbnail
+    *ngIf="imageElementService.similarVideoClipElements.length === 0"
     *ngFor="let item of (showRecentNotSimilar
                           ?  imageElementService.recentlyPlayed
                           : (imageElementService.imageElements | similarityPipe : true : currentClickedItemName
@@ -41,5 +42,44 @@
 
     style="display: inline-block; margin-bottom: 50px"
   ></app-thumbnail>
+
+
+  <div
+    *ngIf="imageElementService.similarVideoClipElements.length > 0"
+    class="visual-similar-clips-container"
+  >
+    <div
+      class="most-similar-comment"
+      @similarResultsText
+    >
+      {{ 'TAGS.showingVisuallySimilar' | translate }}
+      <span class="most-similar-filename">
+        {{ currentClickedItemName }}
+      </span>
+    </div>
+
+    <app-visual-similarity-clip-item
+      *ngFor="let clip of imageElementService.similarVideoClipElements"
+      (videoClick)="handleClick.emit({ expectedEvent: $event, item: clip })"
+      (contextmenu)="rightMouseClicked.emit({ mouseEvent: $event, item: clip })"
+
+      [elHeight]="previewHeightRelated + 50"
+      [elWidth]="previewWidthRelated"
+      [folderPath]="appState.selectedOutputFolder"
+      [hubName]="appState.hubName"
+      [imgHeight]="previewHeightRelated"
+
+      [clip]="clip"
+
+      [darkMode]="settingsButtons['darkMode'].toggled"
+      [hoverScrub]="settingsButtons['hoverScrub'].toggled"
+      [largerFont]="settingsButtons['fontSizeLarger'].toggled"
+      [returnToFirstScreenshot]="settingsButtons['returnToFirstScreenshot'].toggled"
+      [showMeta]="settingsButtons['showMoreInfo'].toggled"
+
+      style="display: inline-block; margin-bottom: 50px"
+    ></app-visual-similarity-clip-item>
+  </div>
+
 
 </div>

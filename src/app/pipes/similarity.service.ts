@@ -1,4 +1,10 @@
 import { Injectable } from '@angular/core';
+import { ElectronService } from '../providers/electron.service'; // Import ElectronService
+import { ImageElementService } from '../services/image-element.service'; // Import ImageElementService
+import {
+  VisualSimilaritySearchRequest,
+  VisualSimilaritySearchResponse
+} from './../../../interfaces/shared-interfaces'; // Import IPC interfaces
 
 @Injectable()
 export class SimilarityService {
@@ -8,10 +14,23 @@ export class SimilarityService {
 
   fileNameElements: string[]; // array of words in the original file name
 
-  constructor() { }
+  constructor(
+    private electronService: ElectronService, // Inject ElectronService
+    private imageElementService: ImageElementService // Inject ImageElementService
+  ) {
+    // Set up IPC listener for visual similarity search results
+    this.electronService.ipcRenderer.on('visual-similarity-clips-results', (event, response: VisualSimilaritySearchResponse) => {
+      if (response.error) {
+        console.error('Visual similarity search error:', response.error);
+        // TODO: Display error to user via a notification service
+      } else {
+        this.imageElementService.setSimilarVideoClipElements(response.results);
+      }
+    });
+  }
 
   /**
-   * Reset the map to empty and set the new filename to compare to
+   * Resets the map to empty and sets the new filename to compare to
    */
   public restartWith(filename: string): void {
     // lowercase everything, remove `the`, ` - `, and trim space if `the` was the first word
@@ -47,9 +66,9 @@ export class SimilarityService {
   }
 
   /**
-   * Find filename with greatest number of similar words
-   * remove it from the map,
-   * and return its index
+   * Finds filename with greatest number of similar words
+   * removes it from the map,
+   * and returns its index
    */
   private getMostCommon(): number {
     let currNumSimilar = 0;
@@ -99,6 +118,17 @@ export class SimilarityService {
     }
 
     return finalResult;
+  }
+
+  /**
+   * Sends an IPC request to the Electron main process to find visually similar clips.
+   * Results will be returned via the 'visual-similarity-clips-results' IPC channel.
+   * @param videoId - The ID (hash) of the video from which the clip was selected.
+   * @param clipTimestamp - The start timestamp of the 5-second clip to find similarities for.
+   */
+  public findVisualSimilarClips(videoId: string, clipTimestamp: number): void {
+    const request: VisualSimilaritySearchRequest = { videoId, clipTimestamp };
+    this.electronService.ipcRenderer.send('visual-similarity-search-clips', request);
   }
 
 }

@@ -67,6 +67,12 @@ export interface ImageElementPlus extends ImageElement {
   fullPath: string;              // the full path to video file -- used only in node for extracting meta & thumbnails
 }
 
+export interface ImageClipElement extends ImageElement {
+  clipTimestamp?: number;
+  similarityScore?: number;
+  keyframePath?: string; // Path to the keyframe for display, useful for frontend
+}
+
 // Use this to create a new ImageElement if needed
 export function NewImageElement(): ImageElement {
   return {

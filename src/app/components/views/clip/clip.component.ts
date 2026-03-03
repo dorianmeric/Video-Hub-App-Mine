@@ -27,6 +27,7 @@ export class ClipComponent implements OnInit {
   @Output() rightClick = new EventEmitter<RightClickEmit>();
   @Output() sheetClick = new EventEmitter<any>(); // does not emit data of any kind
   @Output() videoClick = new EventEmitter<VideoClickEmit>();
+  @Output() findVisualSimilar = new EventEmitter<{ videoId: string, clipTimestamp: number }>(); // New Output
 
   @Input() video: ImageElement;
 
@@ -72,6 +73,10 @@ export class ClipComponent implements OnInit {
   @HostListener('window:focus', ['$event'])
   onFocus(event: any): void {
     this.appInFocus = true;
+  }
+
+  findVisualSimilarClick(): void {
+    this.findVisualSimilar.emit({ videoId: this.video.hash, clipTimestamp: 0 });
   }
 
   stopPreview(event): any {

@@ -16,6 +16,9 @@ export interface SettingsObject {
   shortcuts: Map<string, SettingsButtonKey | CustomShortcutAction>;
   vhaFileHistory: HistoryItem[];
   wizardOptions: WizardOptions;
+  // New settings for visual similarity
+  visualSimilarityThreshold: number; // 0-64 for Hamming distance, or 0-100 for percentage similarity
+  visualSimilarityNumberResults: number; // e.g., 10 results
 }
 
 export interface RemoteSettings {
