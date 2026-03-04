@@ -22,16 +22,18 @@ export async function generatePerceptualHash(imagePath: string): Promise<string 
       console.warn(`Image file is empty: ${imagePath}`);
       return null;
     }
-    
+
     // Sometimes sharp can fail if the file is still being locked or written
     // sharp-phash can take a file path directly and handles the sharp processing internally
     try {
-      const hash = await phash(imagePath);
+      const fileContent = fs.readFileSync(imagePath); // Attempt to read the file to ensure it's not locked or in use
+      const hash = await phash(fileContent);
       return hash;
     } catch (innerError) {
       // Retry once after a small delay
       await new Promise(resolve => setTimeout(resolve, 100));
-      const hash = await phash(imagePath);
+      const fileContent = fs.readFileSync(imagePath);
+      const hash = await phash(fileContent);
       return hash;
     }
   } catch (error) {

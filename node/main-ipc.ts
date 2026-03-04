@@ -562,7 +562,7 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
           const keyframes = await extractKeyframesForVisualSimilarity(
             fullVideoPath,
             tempKeyframeDir,
-            5 // Every 5 seconds
+            10 // Every 5 seconds
           );
 
           for (const keyframe of keyframes) {
@@ -571,7 +571,7 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
               visualSimilarityIndex.addClip(BigInt('0b' + perceptualHash), {
                 videoId: imageElement.hash,
                 timestamp: keyframe.timestamp,
-                keyframePath: keyframe.path,
+                keyframePath: keyframe.path
               });
             }
           }

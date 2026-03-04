@@ -1,10 +1,14 @@
 .meta-container {
     margin: 20px 20px 5px;
+    // max-width: calc(100% - 40px);
+    // overflow-x: auto;
     position: relative;
     transition: 300ms;
     transition-property: height;
     width: calc(100% - 40px);
 }
+
+
 
 .filmstrip-container {
     background-color: black;

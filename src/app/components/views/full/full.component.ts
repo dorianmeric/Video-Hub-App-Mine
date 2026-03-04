@@ -67,15 +67,17 @@ export class FullViewComponent implements OnInit {
   }
 
   render(): void {
-    const imgWidth = this._imgHeight * 16 / 9;
+    const aspectRatio = (this.video.height > 0) ? (this.video.width / this.video.height) : (16 / 9);
+    const imgWidth = this._imgHeight * aspectRatio;
     const imagesPerRow = Math.floor(this._metaWidth / imgWidth) || 1; // never let this be zero
     this.computedWidth = imgWidth * imagesPerRow;
     const numOfRows = Math.ceil((<any>(this.video || {screens: 0}).screens) / imagesPerRow);
     this.rowOffsets = [];
     for (let i = 0; i < numOfRows; i++) {
-      this.rowOffsets.push(i * Math.floor(this._metaWidth / imgWidth));
+      this.rowOffsets.push(i * imagesPerRow);
     }
   }
+
 
   toggleHeart(): void {
     this.imageElementService.toggleHeart(this.video.index);

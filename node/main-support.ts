@@ -500,13 +500,13 @@ export function extractMetadataAsync(
             imageElement.screens   = computeNumberOfScreenshots(screenshotSettings, duration);
             imageElement.width     = origWidth;
             imageElement.fps       = realFps;
- 
+
             console.log('EXTRACTING METADATA (hash) STARTING: ' + filePath);
             hashFileAsync(filePath, fileStat).then((hash) => {
               console.log('EXTRACTING METADATA (hash) FINISHED: ' + filePath);
               imageElement.hash = hash;
               resolve(imageElement);
-  
+
               // --- Background processing for visual similarity ---
               Promise.resolve().then(async () => {
                 const tempKeyframeDir = path.join(
@@ -519,7 +519,7 @@ export function extractMetadataAsync(
                 const keyframes = await extractKeyframesForVisualSimilarity(
                   filePath,
                   tempKeyframeDir,
-                  5 // Extract a keyframe every 5 seconds
+                  10 // Extract a keyframe every 10 seconds
                 );
 
                 console.log(`VISUAL SIMILARITY INDEXING (keyframes extracted): ${imageElement.fileName}, Count: ${keyframes.length}`);
@@ -544,7 +544,7 @@ export function extractMetadataAsync(
               }).catch(err => console.error(`Error during background indexing for ${imageElement.fileName}:`, err));
               // --- End background processing for visual similarity ---
             });
-  
+
           });
 
       }

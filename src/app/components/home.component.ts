@@ -1439,6 +1439,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.settingsButtons['showFilmstrip'].toggled = false;
     this.settingsButtons['showFullView'].toggled = false;
     this.settingsButtons['showThumbnails'].toggled = false;
+    this.settingsButtons['showSimilarityIndex'].toggled = false;
   }
 
   /**

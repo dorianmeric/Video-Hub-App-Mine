@@ -89,14 +89,14 @@ export function extractFrameAtTimestamp(
  * Extracts keyframes from a video at specified intervals (e.g., every 5 seconds).
  * @param pathToVideo - full path to the video file
  * @param outputDir - directory to save the extracted keyframes
- * @param intervalSeconds - interval in seconds for keyframe extraction (default: 5)
+ * @param intervalSeconds - interval in seconds for keyframe extraction (default: 10
  * @param frameHeight - desired height for the extracted frames (default: 360)
  * @returns Promise<{timestamp: number, path: string}[]> - Array of objects with timestamp and path to extracted frame
  */
 export async function extractKeyframesForVisualSimilarity(
   pathToVideo: string,
   outputDir: string,
-  intervalSeconds: number = 5,
+  intervalSeconds: number = 10,
   frameHeight: number = 360
 ): Promise<{timestamp: number, path: string}[]> {
   try {
