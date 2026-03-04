@@ -47,6 +47,7 @@
     "@ffprobe-installer/ffprobe": "2.1.2",
     "@iharbeck/ngx-virtual-scroller": "17.0.2",
     "@ngx-translate/core": "15.0.0",
+    "@tweenjs/tween.js": "^25.0.0",
     "an-qrcode": "1.0.7",
     "async": "3.2.5",
     "body-parser": "1.20.2",

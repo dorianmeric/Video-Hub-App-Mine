@@ -1924,13 +1924,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
       } as SettingsButtonSavedProperties;
     });
 
-    return {
+return {
       appState: this.appState,
       buttonSettings: buttonSettings,
       remoteSettings: this.remoteSettings,
       shortcuts: this.shortcutService.keyToActionMap,
       vhaFileHistory: this.vhaFileHistory,
-      wizardOptions: this.wizard
+      wizardOptions: this.wizard,
+      visualSimilarityThreshold: 20,
+      visualSimilarityNumberResults: 50,
     };
   }
 

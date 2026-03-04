@@ -14,10 +14,10 @@ import { metaAppear, textAppear } from '../../common/animations';
   selector: 'app-visual-similarity-clip-item',
   templateUrl: './visual-similarity-clip-item.component.html',
   styleUrls: [
-      '../../common/scss/clip-and-preview.scss',
-      '../../common/scss/time-and-rez.scss',
+      '../views/clip-and-preview.scss',
+      '../views/time-and-rez.scss',
       '../views/clip/clip.component.scss', // Using original clip styles
-      '../../common/scss/selected.scss'
+      '../views/selected.scss'
     ],
   animations: [ textAppear,
                 metaAppear ]
