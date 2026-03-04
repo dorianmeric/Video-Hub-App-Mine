@@ -223,8 +223,9 @@
   },
   "RIGHTCLICK": {
     "cancelRename": "cancel rename",
-    "delete": "Delete",
+    "delete": "Delete Video",
     "errorFileNameExists": "A file exists with this filename",
+
     "errorFileNotFound": "Original file could not be found",
     "errorMustBeDifferent": "new file name must be different",
     "errorMustNotBeEmpty": "new file name may not be empty",

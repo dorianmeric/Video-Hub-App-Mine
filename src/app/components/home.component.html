@@ -96,13 +96,13 @@
                                                                 {{ 'RIGHTCLICK.openFolder'  | translate }}</li>
       <li (click)="openThumbnailSheet(currentRightClickedItem)">{{ 'RIGHTCLICK.sheetModal'  | translate }}</li>
       <li
-        *ngIf="settingsButtons['showDeleteOption'].toggled"
         (click)="deleteThisFile(currentRightClickedItem)"
         class="right-click-delete"
         [ngClass]="{ 'right-click-disabled': !sourceFolderService.sourceFolderConnected[currentRightClickedItem.inputSource] }"
       >
                                                                 {{ 'RIGHTCLICK.delete'      | translate }}</li>
     </ul>
+
   </div>
 
   <!-- ===========   Thumbnail Sheet Display   =========== -->

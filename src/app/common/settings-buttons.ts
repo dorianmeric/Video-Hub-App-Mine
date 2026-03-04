@@ -40,10 +40,10 @@ export type SettingsButtonKey = 'autoFileTags'
  | 'resetSettings'
  | 'resolutionFilter'
  | 'returnToFirstScreenshot'
- | 'showClips'
- | 'showDeleteOption'
- | 'showDetails'
- | 'showDetails2'
+  | 'showClips'
+  | 'showDetails'
+  | 'showDetails2'
+
  | 'showDetailsTray'
  | 'showFiles'
  | 'showFilmstrip'
@@ -199,12 +199,12 @@ export const SettingsButtonsGroups: SettingsButtonKey[][] = [
     'startWizard',
     'resetSettings', // Various settings
     'clearHistory',
-    'showDeleteOption',
     'dangerousDelete',
     'playPlaylist',
     'openAtTimestamp',
   ]
 ];
+
 
 // Breaks up content into 3 tabs
 export const SettingsMetaGroup: string[][] = [
@@ -579,14 +579,8 @@ export const SettingsButtons: SettingsButtonsType = {
     title: 'BUTTONS.showClipsHint',
     toggled: false
   },
-  'showDeleteOption': {
-    description: 'BUTTONS.showDeleteButtonDescription',
-    hidden: true,
-    moreInfo: 'BUTTONS.showDeleteButtonMoreInfo',
-    title: 'BUTTONS.showDeleteButton',
-    toggled: false
-  },
   'showDetails': {
+
     description: 'BUTTONS.showDetailsDescription',
     hidden: false,
     iconName: 'icon-show-details',
