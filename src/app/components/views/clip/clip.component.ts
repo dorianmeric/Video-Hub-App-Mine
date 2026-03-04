@@ -28,6 +28,7 @@ export class ClipComponent implements OnInit {
   @Output() sheetClick = new EventEmitter<any>(); // does not emit data of any kind
   @Output() videoClick = new EventEmitter<VideoClickEmit>();
   @Output() findVisualSimilar = new EventEmitter<{ videoId: string, clipTimestamp: number }>(); // New Output
+  @Output() findDuplicates = new EventEmitter<{ videoId: string, clipTimestamp: number }>();
 
   @Input() video: ImageElement;
 
@@ -77,6 +78,10 @@ export class ClipComponent implements OnInit {
 
   findVisualSimilarClick(): void {
     this.findVisualSimilar.emit({ videoId: this.video.hash, clipTimestamp: 0 });
+  }
+
+  findDuplicatesClick(): void {
+    this.findDuplicates.emit({ videoId: this.video.hash, clipTimestamp: 0 });
   }
 
   stopPreview(event): any {

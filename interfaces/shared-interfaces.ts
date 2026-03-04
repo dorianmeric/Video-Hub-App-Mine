@@ -83,9 +83,12 @@ export interface RemoteVideoClick {
   thumbIndex?: number;
 }
 
+export type VisualSimilaritySearchMode = 'default' | 'duplicates';
+
 export interface VisualSimilaritySearchRequest {
   videoId: string; // The ID of the video from which the clip was selected
   clipTimestamp: number; // The start timestamp of the 5-second clip
+  searchMode?: VisualSimilaritySearchMode; // Search mode: 'default' or 'duplicates'
 }
 
 export interface VisualSimilarityClipResult {

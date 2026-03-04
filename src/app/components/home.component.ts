@@ -19,6 +19,7 @@ import { ModalService } from './modal/modal.service';
 import { PipeSideEffectService } from '../pipes/pipe-side-effect.service';
 import { ResolutionFilterService } from '../pipes/resolution-filter.service';
 import { ShortcutsService, CustomShortcutAction } from './shortcuts/shortcuts.service';
+import { SimilarityService } from '../pipes/similarity.service';
 import { SourceFolderService } from './statistics/source-folder.service';
 import { StarFilterService } from '../pipes/star-filter.service';
 import { WordFrequencyService, WordFreqAndHeight } from '../pipes/word-frequency.service';
@@ -377,6 +378,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     public pipeSideEffectService: PipeSideEffectService,
     public resolutionFilterService: ResolutionFilterService,
     public shortcutService: ShortcutsService,
+    public similarityService: SimilarityService,
     public sourceFolderService: SourceFolderService,
     public starFilterService: StarFilterService,
     public translate: TranslateService,
@@ -2410,6 +2412,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
     console.log('stopping server');
     this.electronService.ipcRenderer.send('stop-server');
     this.serverDetailsBehaviorSubject.next(undefined);
+  }
+
+  findDuplicatesClips(event: { videoId: string, clipTimestamp: number }): void {
+    this.similarityService.findVisualSimilarClips(event.videoId, event.clipTimestamp, 'duplicates');
   }
 
 }

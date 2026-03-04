@@ -162,6 +162,16 @@
     }"
     title="Find Visually Similar Clips"
   ></app-icon>
+
+  <app-icon
+    class="duplicate-icon"
+    [icon]="'icon-copy'"
+    (click)="findDuplicatesClick()"
+    [ngStyle]="{
+      'opacity': (this.hover ? 1 : 0)
+    }"
+    title="Find Duplicates"
+  ></app-icon>
   </ng-template>
 
 </div>

@@ -3,7 +3,8 @@ import { ElectronService } from '../providers/electron.service'; // Import Elect
 import { ImageElementService } from '../services/image-element.service'; // Import ImageElementService
 import {
   VisualSimilaritySearchRequest,
-  VisualSimilaritySearchResponse
+  VisualSimilaritySearchResponse,
+  VisualSimilaritySearchMode
 } from './../../../interfaces/shared-interfaces'; // Import IPC interfaces
 
 @Injectable()
@@ -125,9 +126,10 @@ export class SimilarityService {
    * Results will be returned via the 'visual-similarity-clips-results' IPC channel.
    * @param videoId - The ID (hash) of the video from which the clip was selected.
    * @param clipTimestamp - The start timestamp of the 5-second clip to find similarities for.
+   * @param searchMode - Optional search mode: 'default' or 'duplicates'.
    */
-  public findVisualSimilarClips(videoId: string, clipTimestamp: number): void {
-    const request: VisualSimilaritySearchRequest = { videoId, clipTimestamp };
+  public findVisualSimilarClips(videoId: string, clipTimestamp: number, searchMode: VisualSimilaritySearchMode = 'default'): void {
+    const request: VisualSimilaritySearchRequest = { videoId, clipTimestamp, searchMode };
     this.electronService.ipcRenderer.send('visual-similarity-search-clips', request);
   }
 

@@ -50,10 +50,11 @@ class VisualSimilarityIndex {
    * Queries the index for similar clips.
    * @param queryHash - The perceptual hash of the clip to query for.
    * @param numResults - The number of similar results to return.
+   * @param minSimilarity - Optional minimum similarity score (0-100) to filter results.
    * @param ef - Parameter for controlling the speed/accuracy tradeoff during search.
    * @returns Promise<SimilarityResult[]> - An array of similar clips with their metadata and similarity score.
    */
-  public querySimilar(queryHash: bigint, numResults: number = 10, ef: number = 50): SimilarityResult[] {
+  public querySimilar(queryHash: bigint, numResults: number = 10, minSimilarity: number = 0, ef: number = 50): SimilarityResult[] {
     if (!this.index) {
       throw new Error('HNSW index not initialized.');
     }
@@ -77,7 +78,7 @@ class VisualSimilarityIndex {
         ...neighborMetadata,
         similarityScore: similarityScore,
       };
-    });
+    }).filter(result => result.similarityScore >= minSimilarity);
   }
 
   /**
