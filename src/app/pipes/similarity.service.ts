@@ -127,9 +127,17 @@ export class SimilarityService {
    * @param videoId - The ID (hash) of the video from which the clip was selected.
    * @param clipTimestamp - The start timestamp of the 5-second clip to find similarities for.
    * @param searchMode - Optional search mode: 'default' or 'duplicates'.
+   * @param threshold - Optional similarity threshold (0-100).
+   * @param numResults - Optional number of results to return.
    */
-  public findVisualSimilarClips(videoId: string, clipTimestamp: number, searchMode: VisualSimilaritySearchMode = 'default'): void {
-    const request: VisualSimilaritySearchRequest = { videoId, clipTimestamp, searchMode };
+  public findVisualSimilarClips(
+    videoId: string,
+    clipTimestamp: number,
+    searchMode: VisualSimilaritySearchMode = 'default',
+    threshold?: number,
+    numResults?: number
+  ): void {
+    const request: VisualSimilaritySearchRequest = { videoId, clipTimestamp, searchMode, threshold, numResults };
     this.electronService.ipcRenderer.send('visual-similarity-search-clips', request);
   }
 

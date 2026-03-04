@@ -89,6 +89,8 @@ export interface VisualSimilaritySearchRequest {
   videoId: string; // The ID of the video from which the clip was selected
   clipTimestamp: number; // The start timestamp of the 5-second clip
   searchMode?: VisualSimilaritySearchMode; // Search mode: 'default' or 'duplicates'
+  threshold?: number;
+  numResults?: number;
 }
 
 export interface VisualSimilarityClipResult {

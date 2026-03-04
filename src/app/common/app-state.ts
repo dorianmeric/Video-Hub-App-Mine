@@ -61,6 +61,8 @@ export const AppState: AppStateInterface = { // AppState is saved into `settings
   selectedOutputFolder: '',
   sortTagsByFrequency: false,
   videoPlayerArgs: '',
+  visualSimilarityThreshold: 20,
+  visualSimilarityNumberResults: 50,
 };
 
 export interface AppStateInterface {
@@ -79,4 +81,6 @@ export interface AppStateInterface {
   selectedOutputFolder: string;
   sortTagsByFrequency: boolean; // when `false` sort tags alphabetically
   videoPlayerArgs: string;
+  visualSimilarityThreshold: number;
+  visualSimilarityNumberResults: number;
 }

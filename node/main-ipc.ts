@@ -462,8 +462,8 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
       fs.unlinkSync(tempKeyframePath);
 
       const isDuplicatesMode = request.searchMode === 'duplicates';
-      const minSimilarity = isDuplicatesMode ? 95 : 0;
-      const numResults = isDuplicatesMode ? 20 : 10;
+      const minSimilarity = request.threshold !== undefined ? request.threshold : (isDuplicatesMode ? 95 : 0);
+      const numResults = request.numResults !== undefined ? request.numResults : (isDuplicatesMode ? 20 : 10);
 
       // Query the index for similar clips
       const similarResults: VisualSimilarityClipResult[] = visualSimilarityIndex.querySimilar(

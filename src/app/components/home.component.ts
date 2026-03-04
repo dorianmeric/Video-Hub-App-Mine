@@ -1932,8 +1932,8 @@ return {
       shortcuts: this.shortcutService.keyToActionMap,
       vhaFileHistory: this.vhaFileHistory,
       wizardOptions: this.wizard,
-      visualSimilarityThreshold: 20,
-      visualSimilarityNumberResults: 50,
+      visualSimilarityThreshold: this.appState.visualSimilarityThreshold,
+      visualSimilarityNumberResults: this.appState.visualSimilarityNumberResults,
     };
   }
 
@@ -1972,6 +1972,12 @@ return {
       }
       if (!settingsObject.appState.imgsPerRow) {
         this.appState.imgsPerRow = DefaultImagesPerRow;
+      }
+      if (settingsObject.appState.visualSimilarityThreshold === undefined) {
+        this.appState.visualSimilarityThreshold = 20;
+      }
+      if (settingsObject.appState.visualSimilarityNumberResults === undefined) {
+        this.appState.visualSimilarityNumberResults = 50;
       }
     }
     this.sortType = this.appState.currentSort;
@@ -2421,8 +2427,24 @@ return {
     this.serverDetailsBehaviorSubject.next(undefined);
   }
 
+  findVisualSimilarClips(event: { videoId: string, clipTimestamp: number }): void {
+    this.similarityService.findVisualSimilarClips(
+      event.videoId,
+      event.clipTimestamp,
+      'default',
+      this.appState.visualSimilarityThreshold,
+      this.appState.visualSimilarityNumberResults
+    );
+  }
+
   findDuplicatesClips(event: { videoId: string, clipTimestamp: number }): void {
-    this.similarityService.findVisualSimilarClips(event.videoId, event.clipTimestamp, 'duplicates');
+    this.similarityService.findVisualSimilarClips(
+      event.videoId,
+      event.clipTimestamp,
+      'duplicates',
+      this.appState.visualSimilarityThreshold,
+      this.appState.visualSimilarityNumberResults
+    );
   }
 
 }

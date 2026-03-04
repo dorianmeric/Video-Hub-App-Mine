@@ -146,6 +146,33 @@
       </button>
     </div>
 
+    <span class="setting-heading">
+      {{ 'SETTINGS.visualSimilaritySettings' | translate }}
+    </span>
+
+    <div class="player-settings player-settings-launch-args">
+      {{ 'SETTINGS.visualSimilarityThreshold' | translate }} (0-100%)
+
+      <input
+        class="filter-general input-filter player-args-input"
+        [(ngModel)]="appState.visualSimilarityThreshold"
+        type="number"
+        min="0"
+        max="100"
+      >
+    </div>
+
+    <div class="player-settings player-settings-launch-args">
+      {{ 'SETTINGS.visualSimilarityNumberResults' | translate }}
+
+      <input
+        class="filter-general input-filter player-args-input"
+        [(ngModel)]="appState.visualSimilarityNumberResults"
+        type="number"
+        min="1"
+      >
+    </div>
+
     <!-- ZOOM BUTTONS -->
 
     <span class="setting-heading">
