@@ -11,6 +11,7 @@ import type { RightClickEmit, VideoClickEmit } from '../../../../interfaces/shar
 import { metaAppear, textAppear } from '../../common/animations';
 
 @Component({
+  standalone: false,
   selector: 'app-visual-similarity-clip-item',
   templateUrl: './visual-similarity-clip-item.component.html',
   styleUrls: [

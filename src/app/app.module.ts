@@ -184,6 +184,10 @@ import { YearPipe } from './pipes/year.pipe';
     WelcomeComponent,
     WizardComponent,
     VisualSimilarityClipItemComponent,
+    WordFrequencyPipe,
+    WrapperPipe,
+    YearFilterPipe,
+    YearPipe,
   ],
   imports: [
     // AnQrcodeModule, // TODO: enable and fix later!

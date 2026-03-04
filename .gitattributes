@@ -1,0 +1,39 @@
+# 1) Normalize all text files to LF in the repo
+* text=auto
+
+# 2) Explicitly force common text files to LF in the working tree too (safer for shells/tools)
+*.sh      text eol=lf
+*.bash    text eol=lf
+*.zsh     text eol=lf
+*.py      text eol=lf
+*.js      text eol=lf
+*.ts      text eol=lf
+*.json    text eol=lf
+*.yml     text eol=lf
+*.yaml    text eol=lf
+*.md      text eol=lf
+*.tf      text eol=lf
+Dockerfile text eol=lf
+Makefile  text eol=lf
+*.properties text eol=lf
+*.csv     text eol=lf
+*.vcf    text eol=lf
+
+# 3) Force CRLF for Windows-native scripts if they truly require it
+*.bat     text eol=crlf
+*.cmd     text eol=crlf
+*.ps1     text eol=crlf
+
+# 4) Never modify line endings for binary files
+*.png     -text
+*.jpg     -text
+*.jpeg    -text
+*.gif     -text
+*.pdf     -text
+*.zip     -text
+*.jar     -text
+*.exe     -text
+*.dll     -text
+*.so      -text
+*.woff    -text
+*.woff2   -text

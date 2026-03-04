@@ -13,8 +13,8 @@
       "es2022",
       "dom"
     ],
-    "module": "esnext",
-"moduleResolution": "node",
+"module": "esnext",
+    "moduleResolution": "bundler",
     "outDir": "./dist/out-tsc",
     "removeComments": true,
     "skipLibCheck": true,

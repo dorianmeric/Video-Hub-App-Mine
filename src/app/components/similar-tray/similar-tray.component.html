@@ -13,35 +13,36 @@
     </span>
   </div>
 
-  <app-thumbnail
-    *ngIf="imageElementService.similarVideoClipElements.length === 0"
-    *ngFor="let item of (showRecentNotSimilar
-                          ?  imageElementService.recentlyPlayed
-                          : (imageElementService.imageElements | similarityPipe : true : currentClickedItemName
-                                                               | slice : 0 : 8 )
-                        )"
+  <ng-container *ngIf="imageElementService.similarVideoClipElements.length === 0">
+    <app-thumbnail
+      *ngFor="let item of (showRecentNotSimilar
+                            ?  imageElementService.recentlyPlayed
+                            : (imageElementService.imageElements | similarityPipe : true : currentClickedItemName
+                                                                 | slice : 0 : 8 )
+                          )"
 
-    (videoClick)="handleClick.emit({ expectedEvent: $event, item: item })"
-    (contextmenu)="rightMouseClicked.emit({ mouseEvent: $event, item: item })"
+      (videoClick)="handleClick.emit({ expectedEvent: $event, item: item })"
+      (contextmenu)="rightMouseClicked.emit({ mouseEvent: $event, item: item })"
 
-    [elHeight]="previewHeightRelated + 50"
-    [elWidth]="previewWidthRelated"
-    [folderPath]="appState.selectedOutputFolder"
-    [hubName]="appState.hubName"
-    [imgHeight]="previewHeightRelated"
+      [elHeight]="previewHeightRelated + 50"
+      [elWidth]="previewWidthRelated"
+      [folderPath]="appState.selectedOutputFolder"
+      [hubName]="appState.hubName"
+      [imgHeight]="previewHeightRelated"
 
-    [video]="item"
+      [video]="item"
 
-    [connected]="sourceFolderService.sourceFolderConnected[item.inputSource]"
+      [connected]="sourceFolderService.sourceFolderConnected[item.inputSource]"
 
-    [darkMode]="settingsButtons['darkMode'].toggled"
-    [hoverScrub]="settingsButtons['hoverScrub'].toggled"
-    [largerFont]="settingsButtons['fontSizeLarger'].toggled"
-    [returnToFirstScreenshot]="settingsButtons['returnToFirstScreenshot'].toggled"
-    [showMeta]="settingsButtons['showMoreInfo'].toggled"
+      [darkMode]="settingsButtons['darkMode'].toggled"
+      [hoverScrub]="settingsButtons['hoverScrub'].toggled"
+      [largerFont]="settingsButtons['fontSizeLarger'].toggled"
+      [returnToFirstScreenshot]="settingsButtons['returnToFirstScreenshot'].toggled"
+      [showMeta]="settingsButtons['showMoreInfo'].toggled"
 
-    style="display: inline-block; margin-bottom: 50px"
-  ></app-thumbnail>
+      style="display: inline-block; margin-bottom: 50px"
+    ></app-thumbnail>
+  </ng-container>
 
 
   <div

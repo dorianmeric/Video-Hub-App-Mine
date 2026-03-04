@@ -74,6 +74,7 @@ import {
 } from '../common/animations';
 
 @Component({
+  standalone: false,
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: [

@@ -1,6 +1,6 @@
 {
   "compileOnSave": false,
-"compilerOptions": {
+  "compilerOptions": {
     "baseUrl": "",
     "declaration": false,
     "experimentalDecorators": true,
@@ -10,7 +10,7 @@
       "dom"
     ],
     "module": "esnext",
-"moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "./dist/out-tsc",
     "removeComments": true,
     "skipLibCheck": true,
