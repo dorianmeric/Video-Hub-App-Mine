@@ -528,6 +528,90 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
     }
   });
 
+  ipc.on('rebuild-visual-similarity-index', async (event) => {
+    try {
+      console.log('REBUILDING VISUAL SIMILARITY INDEX...');
+      await visualSimilarityIndex.clear();
+
+      const totalVideos = GLOBALS.finalObject.images.length;
+      let processedVideos = 0;
+
+      for (const imageElement of GLOBALS.finalObject.images) {
+        processedVideos++;
+
+        // Progress update to frontend
+        event.sender.send('visual-similarity-rebuild-progress', {
+          current: processedVideos,
+          total: totalVideos,
+          fileName: imageElement.fileName
+        });
+
+        const fullVideoPath = path.join(
+          (GLOBALS.finalObject.inputDirs[imageElement.inputSource] as any).path,
+          imageElement.partialPath,
+          imageElement.fileName
+        );
+
+        const tempKeyframeDir = path.join(
+          GLOBALS.selectedOutputFolder,
+          'vha-temp-keyframes-indexing',
+          imageElement.hash
+        );
+
+        try {
+          const keyframes = await extractKeyframesForVisualSimilarity(
+            fullVideoPath,
+            tempKeyframeDir,
+            5 // Every 5 seconds
+          );
+
+          for (const keyframe of keyframes) {
+            const perceptualHash = await generatePerceptualHash(keyframe.path);
+            if (perceptualHash) {
+              visualSimilarityIndex.addClip(BigInt('0b' + perceptualHash), {
+                videoId: imageElement.hash,
+                timestamp: keyframe.timestamp,
+                keyframePath: keyframe.path,
+              });
+            }
+          }
+          // Cleanup
+          if (fs.existsSync(tempKeyframeDir)) {
+            fs.rmSync(tempKeyframeDir, { recursive: true, force: true });
+          }
+        } catch (err) {
+          console.error(`Error rebuilding index for ${imageElement.fileName}:`, err);
+        }
+      }
+
+      console.log('VISUAL SIMILARITY INDEX REBUILD COMPLETE');
+
+      // Save visual similarity index
+      const vsIndexPath = GLOBALS.currentlyOpenVhaFile + '.vsindex';
+      const vsMetadataPath = GLOBALS.currentlyOpenVhaFile + '.vsmetadata.json';
+      await visualSimilarityIndex.save(vsIndexPath, vsMetadataPath);
+
+      event.sender.send('visual-similarity-rebuild-complete');
+
+      // Refresh the list on frontend
+      const metadata = visualSimilarityIndex.getMetadata();
+      const results = metadata.map(m => {
+        const video = GLOBALS.finalObject.images.find(img => img.hash === m.videoId);
+        return {
+          hash: m.videoId,
+          videoName: video ? video.fileName : 'unknown',
+          timestamp: m.timestamp,
+          keyframePath: m.keyframePath
+        };
+      });
+      event.sender.send('visual-similarity-index-returning', results);
+
+    } catch (error) {
+      console.error('Error rebuilding visual similarity index:', error);
+      event.sender.send('visual-similarity-rebuild-error', error.message);
+    }
+  });
+
 
 
 }

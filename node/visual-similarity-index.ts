@@ -145,6 +145,15 @@ class VisualSimilarityIndex {
   public getMetadata(): ClipMetadata[] {
     return this.metadata;
   }
+
+  /**
+   * Clears the index and metadata.
+   */
+  public async clear(): Promise<void> {
+    this.metadata = [];
+    await this.init(); // Re-initialize a fresh index
+    console.log('HNSW index and metadata cleared.');
+  }
 }
 
 export const visualSimilarityIndex = new VisualSimilarityIndex();

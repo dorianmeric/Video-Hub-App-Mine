@@ -1,5 +1,20 @@
 <div class="similarity-index-container" [ngClass]="{ 'dark-mode': darkMode }">
-  <h2>Visual Similarity Index</h2>
+  <div class="header-row">
+    <h2>Visual Similarity Index</h2>
+    <div class="actions">
+      <button class="rebuild-btn" [disabled]="rebuilding" (click)="rebuildIndex()">
+        {{ rebuilding ? 'Rebuilding...' : 'Rebuild Index' }}
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="rebuilding" class="progress-bar-container">
+    <div class="progress-bar" [style.width.%]="(rebuildProgress / rebuildTotal) * 100"></div>
+    <div class="progress-text">
+      Indexing: {{ rebuildCurrentFile }} ({{ rebuildProgress }} / {{ rebuildTotal }})
+    </div>
+  </div>
+
   <p>Total clips indexed: {{ indexEntries.length }}</p>
   
   <table class="index-table">

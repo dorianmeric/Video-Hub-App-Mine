@@ -17,6 +17,11 @@ export class SimilarityIndexComponent implements OnInit {
 
   indexEntries: VisualSimilarityIndexResult[] = [];
 
+  rebuilding = false;
+  rebuildProgress = 0;
+  rebuildTotal = 0;
+  rebuildCurrentFile = '';
+
   constructor(
     private electronService: ElectronService,
     private filePathService: FilePathService,
@@ -29,7 +34,25 @@ export class SimilarityIndexComponent implements OnInit {
       this.cd.detectChanges();
     });
 
+    this.electronService.ipcRenderer.on('visual-similarity-rebuild-progress', (event, data) => {
+      this.rebuilding = true;
+      this.rebuildProgress = data.current;
+      this.rebuildTotal = data.total;
+      this.rebuildCurrentFile = data.fileName;
+      this.cd.detectChanges();
+    });
+
+    this.electronService.ipcRenderer.on('visual-similarity-rebuild-complete', () => {
+      this.rebuilding = false;
+      this.cd.detectChanges();
+    });
+
     this.electronService.ipcRenderer.send('get-visual-similarity-index');
+  }
+
+  rebuildIndex(): void {
+    this.rebuilding = true;
+    this.electronService.ipcRenderer.send('rebuild-visual-similarity-index');
   }
 
   getThumbPath(entry: VisualSimilarityIndexResult): string {
