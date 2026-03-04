@@ -113,5 +113,6 @@ export interface VisualSimilarityIndexResult {
   videoName: string;
   timestamp: number;
   keyframePath: string;
+  perceptualHash: string;
 }
 

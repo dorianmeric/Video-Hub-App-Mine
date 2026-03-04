@@ -532,8 +532,10 @@ export function extractMetadataAsync(
                       videoId: imageElement.hash,
                       timestamp: keyframe.timestamp,
                       keyframePath: keyframe.path,
+                      perceptualHash: perceptualHash,
                     });
                   }
+
                   if (i % 10 === 0) {
                     console.log(`VISUAL SIMILARITY INDEXING PROGRESS: ${imageElement.fileName}, ${i}/${keyframes.length}`);
                   }

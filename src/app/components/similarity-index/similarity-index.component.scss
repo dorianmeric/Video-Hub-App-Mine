@@ -38,6 +38,15 @@
       tr:hover {
         background-color: #4a4a4a;
       }
+
+      code {
+        background-color: #222 !important;
+        color: #d63384;
+      }
+
+      .perceptual-hash-cell code {
+        color: #0dcaf0;
+      }
     }
   }
 
@@ -157,6 +166,17 @@
 
     .timestamp-cell {
       width: 100px;
+    }
+
+    .perceptual-hash-cell {
+      width: 300px;
+      code {
+        background: #f0f0f0;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-size: 0.85em;
+        color: #0d6efd;
+      }
     }
   }
 }

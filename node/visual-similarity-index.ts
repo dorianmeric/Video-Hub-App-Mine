@@ -8,6 +8,7 @@ export interface ClipMetadata {
   videoId: string;
   timestamp: number; // Start timestamp of the 5-second clip
   keyframePath: string; // Path to the extracted keyframe image
+  perceptualHash: string;
 }
 
 export interface SimilarityResult {

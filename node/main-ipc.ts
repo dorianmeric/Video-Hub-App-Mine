@@ -518,10 +518,12 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
           hash: m.videoId,
           videoName: video ? video.fileName : 'unknown',
           timestamp: m.timestamp,
-          keyframePath: m.keyframePath
+          keyframePath: m.keyframePath,
+          perceptualHash: m.perceptualHash
         };
       });
       event.sender.send('visual-similarity-index-returning', results);
+
     } catch (error) {
       console.error('Error fetching visual similarity index:', error);
       event.sender.send('visual-similarity-index-returning', []);
@@ -571,9 +573,11 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
               visualSimilarityIndex.addClip(BigInt('0b' + perceptualHash), {
                 videoId: imageElement.hash,
                 timestamp: keyframe.timestamp,
-                keyframePath: keyframe.path
+                keyframePath: keyframe.path,
+                perceptualHash: perceptualHash
               });
             }
+
           }
           // Cleanup
           if (fs.existsSync(tempKeyframeDir)) {
@@ -612,10 +616,12 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
           hash: m.videoId,
           videoName: video ? video.fileName : 'unknown',
           timestamp: m.timestamp,
-          keyframePath: m.keyframePath
+          keyframePath: m.keyframePath,
+          perceptualHash: m.perceptualHash
         };
       });
       event.sender.send('visual-similarity-index-returning', results);
+
 
     } catch (error) {
       console.error('Error rebuilding visual similarity index:', error);
