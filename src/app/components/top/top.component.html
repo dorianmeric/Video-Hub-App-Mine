@@ -26,4 +26,19 @@
   >
     {{ item }}
   </span>
+
+  <app-icon
+    class="icon-button"
+    [icon]="'icon-sparkles'"
+    (click)="findSimilar()"
+    [title]="'RIGHTCLICK.showSimilar' | translate"
+  ></app-icon>
+
+  <app-icon
+    class="icon-button"
+    [icon]="'icon-copy'"
+    (click)="findDuplicates()"
+    [title]="'SETTINGS.duplicateLength' | translate"
+  ></app-icon>
 </div>
+

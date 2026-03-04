@@ -34,6 +34,8 @@ export class TopComponent {
   @Output() onFileWordClicked = new EventEmitter<string>();
   @Output() onFolderWordClicked = new EventEmitter<string>();
   @Output() onOpenInExplorer = new EventEmitter<boolean>();
+  @Output() onFindSimilar = new EventEmitter<void>();
+  @Output() onFindDuplicates = new EventEmitter<void>();
 
   public folderNameArray: string[];
   public fileNameArray: string[];
@@ -52,5 +54,14 @@ export class TopComponent {
   public openInExplorer(): void {
     this.onOpenInExplorer.emit(true);
   }
+
+  public findSimilar(): void {
+    this.onFindSimilar.emit();
+  }
+
+  public findDuplicates(): void {
+    this.onFindDuplicates.emit();
+  }
+
 
 }

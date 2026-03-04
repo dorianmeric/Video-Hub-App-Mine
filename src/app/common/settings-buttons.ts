@@ -333,14 +333,16 @@ export const SettingsButtons: SettingsButtonsType = {
   },
   'duplicateHash': {
     description: 'BUTTONS.duplicateHashDescription',
-    hidden: true,
+    hidden: false,
+    iconName: 'icon-copy',
     moreInfo: 'BUTTONS.duplicateHashMoreInfo',
     title: 'BUTTONS.duplicateHashHint',
     toggled: false
   },
   'duplicateLength': {
     description: 'BUTTONS.duplicateLengthDescription',
-    hidden: true,
+    hidden: false,
+    iconName: 'icon-hourglass',
     moreInfo: 'BUTTONS.duplicateLengthMoreInfo',
     settingsHeading: 'SETTINGS.duplicateLength',
     title: 'BUTTONS.duplicateLengthHint',
@@ -348,11 +350,13 @@ export const SettingsButtons: SettingsButtonsType = {
   },
   'duplicateSize': {
     description: 'BUTTONS.duplicateSizeDescription',
-    hidden: true,
+    hidden: false,
+    iconName: 'icon-sort-order',
     moreInfo: 'BUTTONS.duplicateSizeMoreInfo',
     title: 'BUTTONS.duplicateSizeHint',
     toggled: false
   },
+
   'durationFilter': {
     description: 'BUTTONS.durationFilterDescription',
     hidden: false,

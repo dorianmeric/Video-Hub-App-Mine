@@ -75,6 +75,23 @@
       color: $dark-blue;
     }
   }
+
+  .icon-button {
+    cursor: pointer;
+    display: inline-block;
+    fill: $gray-50;
+    max-height: 15px;
+    max-width: 15px;
+    margin-left: 10px;
+    transform: translate(0, 2px);
+    transition-duration: 200ms;
+    transition-property: fill;
+    width: 15px;
+
+    &:hover {
+      fill: $pretty-blue;
+    }
+  }
 }
 
 .dark-mode-override {
@@ -105,4 +122,13 @@
       fill: $light-blue;
     }
   }
+
+  & .icon-button {
+    fill: $gray-30;
+
+    &:hover {
+      fill: $light-blue;
+    }
+  }
 }
+

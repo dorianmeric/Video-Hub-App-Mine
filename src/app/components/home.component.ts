@@ -2037,10 +2037,14 @@ return {
    * Handle right-click and `Show similar`
    */
   showSimilarNow(): void {
-    this.findMostSimilar = this.currentRightClickedItem.cleanName;
-    // console.log(this.findMostSimilar);
+    if (this.currentRightClickedItem) {
+      this.findMostSimilar = this.currentRightClickedItem.cleanName;
+    } else if (this.currentClickedItem) {
+      this.findMostSimilar = this.currentClickedItem.cleanName;
+    }
     this.showSimilar = true;
   }
+
 
   /**
    * Handle right-click on file and `view folder`
