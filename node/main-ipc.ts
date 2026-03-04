@@ -577,7 +577,18 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
           }
           // Cleanup
           if (fs.existsSync(tempKeyframeDir)) {
-            fs.rmSync(tempKeyframeDir, { recursive: true, force: true });
+            try {
+              fs.rmSync(tempKeyframeDir, { recursive: true, force: true });
+            } catch (cleanupError) {
+              console.warn(`Initial cleanup failed for ${tempKeyframeDir}, retrying...`, cleanupError);
+              // Small delay to allow any file handles to release
+              await new Promise(resolve => setTimeout(resolve, 100));
+              try {
+                fs.rmSync(tempKeyframeDir, { recursive: true, force: true });
+              } catch (finalError) {
+                console.error(`Final cleanup failed for ${tempKeyframeDir}:`, finalError);
+              }
+            }
           }
         } catch (err) {
           console.error(`Error rebuilding index for ${imageElement.fileName}:`, err);

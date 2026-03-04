@@ -108,16 +108,19 @@ export async function extractKeyframesForVisualSimilarity(
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    const videoFileName = path.basename(pathToVideo);
+  const videoFileName = path.basename(pathToVideo);
 
-    for (let timestamp = 0; timestamp < duration; timestamp += intervalSeconds) {
-      const outputPath = path.join(outputDir, `${videoFileName}_${Math.floor(timestamp)}s.jpg`);
-      const success = await extractFrameAtTimestamp(pathToVideo, timestamp, outputPath, frameHeight);
+  for (let timestamp = 0; timestamp < duration; timestamp += intervalSeconds) {
+    // Using a sanitized and predictable filename for temporary keyframes to avoid issues with special characters in video filenames
+    const sanitizedTimestamp = Math.floor(timestamp).toString().padStart(6, '0');
+    const outputPath = path.join(outputDir, `frame_${sanitizedTimestamp}s.jpg`);
+    const success = await extractFrameAtTimestamp(pathToVideo, timestamp, outputPath, frameHeight);
 
-      if (success) {
-        keyframes.push({ timestamp, path: outputPath });
-      }
+    if (success) {
+      keyframes.push({ timestamp, path: outputPath });
     }
+  }
+
     return keyframes;
   } catch (error) {
     console.error('Error extracting keyframes:', error);
