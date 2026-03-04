@@ -141,6 +141,10 @@ class VisualSimilarityIndex {
       await this.init(); // Initialize if not found
     }
   }
+
+  public getMetadata(): ClipMetadata[] {
+    return this.metadata;
+  }
 }
 
 export const visualSimilarityIndex = new VisualSimilarityIndex();

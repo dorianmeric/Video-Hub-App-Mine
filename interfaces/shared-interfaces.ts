@@ -7,7 +7,8 @@ export type SupportedView = 'showThumbnails'
                           | 'showDetails'
                           | 'showDetails2'
                           | 'showFiles'
-                          | 'showClips';
+                          | 'showClips'
+                          | 'showSimilarityIndex';
 
 export const AllSupportedViews: SupportedView[] = [
                             'showThumbnails',
@@ -17,9 +18,11 @@ export const AllSupportedViews: SupportedView[] = [
                             'showDetails2',
                             'showFiles',
                             'showClips',
+                            'showSimilarityIndex',
 ];
 
 export type SupportedTrayView = 'showDetailsTray'
+
                               | 'showFreq'
                               | 'showRecentlyPlayed'
                               | 'showRelatedVideosTray'
@@ -103,5 +106,12 @@ export interface VisualSimilarityClipResult {
 export interface VisualSimilaritySearchResponse {
   results: VisualSimilarityClipResult[];
   error?: string;
+}
+
+export interface VisualSimilarityIndexResult {
+  hash: string;
+  videoName: string;
+  timestamp: number;
+  keyframePath: string;
 }
 

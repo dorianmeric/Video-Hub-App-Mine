@@ -69,7 +69,12 @@ export function extractFrameAtTimestamp(
 
     ffmpegProcess.on('close', (code) => {
       clearTimeout(timeoutId);
-      resolve(code === 0);
+      if (code === 0 && fs.existsSync(savePath)) {
+        const stats = fs.statSync(savePath);
+        resolve(stats.size > 0);
+      } else {
+        resolve(false);
+      }
     });
 
     ffmpegProcess.on('error', (err) => {

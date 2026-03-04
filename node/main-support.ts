@@ -527,11 +527,13 @@ export function extractMetadataAsync(
                 for (let i = 0; i < keyframes.length; i++) {
                   const keyframe = keyframes[i];
                   const perceptualHash = await generatePerceptualHash(keyframe.path);
-                  visualSimilarityIndex.addClip(BigInt('0b' + perceptualHash), {
-                    videoId: imageElement.hash,
-                    timestamp: keyframe.timestamp,
-                    keyframePath: keyframe.path,
-                  });
+                  if (perceptualHash) {
+                    visualSimilarityIndex.addClip(BigInt('0b' + perceptualHash), {
+                      videoId: imageElement.hash,
+                      timestamp: keyframe.timestamp,
+                      keyframePath: keyframe.path,
+                    });
+                  }
                   if (i % 10 === 0) {
                     console.log(`VISUAL SIMILARITY INDEXING PROGRESS: ${imageElement.fileName}, ${i}/${keyframes.length}`);
                   }

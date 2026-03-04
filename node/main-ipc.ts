@@ -34,8 +34,9 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
    * Un-Maximize the window
    */
   ipc.on('un-maximize-window', (event) => {
-    if (BrowserWindow.getFocusedWindow()) {
-      BrowserWindow.getFocusedWindow().unmaximize();
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+      focusedWindow.unmaximize();
     }
   });
 
@@ -43,8 +44,9 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
    * Minimize the window
    */
   ipc.on('minimize-window', (event) => {
-    if (BrowserWindow.getFocusedWindow()) {
-      BrowserWindow.getFocusedWindow().minimize();
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+      focusedWindow.minimize();
     }
   });
 
@@ -66,8 +68,9 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
    * Maximize the window
    */
   ipc.on('maximize-window', (event) => {
-    if (BrowserWindow.getFocusedWindow()) {
-      BrowserWindow.getFocusedWindow().maximize();
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+    if (focusedWindow) {
+      focusedWindow.maximize();
     }
   });
 
@@ -337,7 +340,7 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
     console.log(newName);
 
     let success = true;
-    let errMsg: string;
+    let errMsg = '';
 
     // check if already exists first
     if (fs.existsSync(newName)) {
@@ -391,7 +394,10 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
             await visualSimilarityIndex.save(vsIndexPath, vsMetadataPath);
 
             GLOBALS.readyToQuit = true;
-            BrowserWindow.getFocusedWindow().close();
+            const focusedWindow = BrowserWindow.getFocusedWindow();
+            if (focusedWindow) {
+              focusedWindow.close();
+            }
           } catch (err) { console.error('Error saving visual similarity index on close:', err); }
         });
 
@@ -403,7 +409,10 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
           await visualSimilarityIndex.save(vsIndexPath, vsMetadataPath);
 
           GLOBALS.readyToQuit = true;
-          BrowserWindow.getFocusedWindow().close();
+          const focusedWindow = BrowserWindow.getFocusedWindow();
+          if (focusedWindow) {
+            focusedWindow.close();
+          }
         } catch (err) { console.error('Error saving visual similarity index on close:', err); }
       }
     });
@@ -456,10 +465,19 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
       }
 
       const targetHashString = await generatePerceptualHash(tempKeyframePath);
-      const targetHashBigInt = BigInt('0b' + targetHashString); // Convert binary string hash to BigInt
 
       // Clean up temporary keyframe file
       fs.unlinkSync(tempKeyframePath);
+
+      if (!targetHashString) {
+        event.sender.send('visual-similarity-clips-results', {
+          results: [],
+          error: 'Failed to generate perceptual hash for target clip.'
+        } as VisualSimilaritySearchResponse);
+        return;
+      }
+
+      const targetHashBigInt = BigInt('0b' + targetHashString); // Convert binary string hash to BigInt
 
       const isDuplicatesMode = request.searchMode === 'duplicates';
       const minSimilarity = request.threshold !== undefined ? request.threshold : (isDuplicatesMode ? 95 : 0);
@@ -488,6 +506,25 @@ export function setUpIpcMessages(ipc, win, pathToAppData, systemMessages) {
         results: [],
         error: error.message || 'An unknown error occurred during visual similarity search.'
       } as VisualSimilaritySearchResponse);
+    }
+  });
+
+  ipc.on('get-visual-similarity-index', (event) => {
+    try {
+      const metadata = visualSimilarityIndex.getMetadata();
+      const results = metadata.map(m => {
+        const video = GLOBALS.finalObject.images.find(img => img.hash === m.videoId);
+        return {
+          hash: m.videoId,
+          videoName: video ? video.fileName : 'unknown',
+          timestamp: m.timestamp,
+          keyframePath: m.keyframePath
+        };
+      });
+      event.sender.send('visual-similarity-index-returning', results);
+    } catch (error) {
+      console.error('Error fetching visual similarity index:', error);
+      event.sender.send('visual-similarity-index-returning', []);
     }
   });
 

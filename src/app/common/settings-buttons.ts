@@ -52,11 +52,13 @@ export type SettingsButtonKey = 'autoFileTags'
  | 'showFullView'
  | 'showMoreInfo'
  | 'showRecent'
- | 'showRecentlyPlayed'
- | 'showRelatedVideosTray'
- | 'showTags'
- | 'showTagTray'
- | 'showThumbnails'
+  | 'showRecentlyPlayed'
+  | 'showRelatedVideosTray'
+  | 'showSimilarityIndex'
+  | 'showTags'
+  | 'showTagTray'
+  | 'showThumbnails'
+
  | 'showVideoNotes'
  | 'shuffleGalleryNow'
  | 'sizeFilter'
@@ -145,7 +147,9 @@ export const SettingsButtonsGroups: SettingsButtonKey[][] = [
     'showDetails2',
     'showFiles',
     'showClips',
+    'showSimilarityIndex',
   ],
+
   [ // 5 - Folder view
     'showFolders',
     'randomizeFoldersScreenshots',
@@ -671,7 +675,15 @@ export const SettingsButtons: SettingsButtonsType = {
     title: 'BUTTONS.relatedTrayHint',
     toggled: false
   },
+  'showSimilarityIndex': {
+    description: 'Similarity Index',
+    hidden: false,
+    iconName: 'icon-show-similar',
+    title: 'Similarity Index',
+    toggled: false
+  },
   'showTags': {
+
     description: 'BUTTONS.showTagsDescription',
     hidden: false,
     iconName: 'icon-tag-auto',

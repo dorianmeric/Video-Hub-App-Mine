@@ -683,9 +683,11 @@
           'gallery-container-dark-mode': settingsButtons['darkMode'].toggled,
           'gallery-showing-breadcrumbs': settingsButtons['showFolders'].toggled
                                          && (appState.currentView === 'showThumbnails' ||
-                                             appState.currentView === 'showFiles' ||
-                                             appState.currentView === 'showClips')
+                                               appState.currentView === 'showFiles' ||
+                                              appState.currentView === 'showClips' ||
+                                              appState.currentView === 'showSimilarityIndex')
         }"
+
 
       [bufferAmount]="0"
 
@@ -1013,7 +1015,16 @@
         ></app-clip-item>
       </ng-container>
 
+      <ng-container *ngIf="appState.currentView === 'showSimilarityIndex'">
+        <app-similarity-index
+          [darkMode]="settingsButtons['darkMode'].toggled"
+          [folderPath]="appState.selectedOutputFolder"
+          [hubName]="appState.hubName"
+        ></app-similarity-index>
+      </ng-container>
+
       <div class="bottom-of-scroller-spacer"></div>
+
 
     </virtual-scroller>
 

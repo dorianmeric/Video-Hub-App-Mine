@@ -1,0 +1,25 @@
+<div class="similarity-index-container" [ngClass]="{ 'dark-mode': darkMode }">
+  <h2>Visual Similarity Index</h2>
+  <p>Total clips indexed: {{ indexEntries.length }}</p>
+  
+  <table class="index-table">
+    <thead>
+      <tr>
+        <th>Screenshot</th>
+        <th>Video Hash</th>
+        <th>Video Filename</th>
+        <th>Timestamp (s)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let entry of indexEntries">
+        <td class="screenshot-cell">
+          <img [src]="'file://' + entry.keyframePath" alt="Keyframe">
+        </td>
+        <td class="hash-cell"><code>{{ entry.hash }}</code></td>
+        <td class="filename-cell">{{ entry.videoName }}</td>
+        <td class="timestamp-cell">{{ entry.timestamp }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

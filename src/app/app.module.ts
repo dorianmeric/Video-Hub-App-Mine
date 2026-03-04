@@ -70,6 +70,7 @@ import { TopComponent } from './components/top/top.component';
 import { ViewTagsComponent } from './components/tags-manual/view-tags.component';
 import { WelcomeComponent } from './components/modal/welcome.component';
 import { WizardComponent } from './components/wizard/wizard.component';
+import { SimilarityIndexComponent } from './components/similarity-index/similarity-index.component'; // New component
 import { VisualSimilarityClipItemComponent } from './components/visual-similarity-clip-item/visual-similarity-clip-item.component'; // New component
 
 // Pipes
@@ -184,6 +185,7 @@ import { YearPipe } from './pipes/year.pipe';
     WelcomeComponent,
     WizardComponent,
     VisualSimilarityClipItemComponent,
+    SimilarityIndexComponent,
     WordFrequencyPipe,
     WrapperPipe,
     YearFilterPipe,
