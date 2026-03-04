@@ -130,11 +130,13 @@ export function resetAllQueues(): void {
  * @param done    -- callback to indicate the current extraction finished
  */
 function thumbQueueRunner(element: ImageElement, done): void {
+  console.log('THUMB QUEUE STARTING: ' + element.fileName);
   const screenshotOutputFolder: string = path.join(GLOBALS.selectedOutputFolder, 'vha-' + GLOBALS.hubName);
   const shouldExtractClips: boolean = GLOBALS.screenshotSettings.clipSnippets > 0;
 
   hasAllThumbs(element.hash, screenshotOutputFolder, shouldExtractClips)
     .then(() => {
+      console.log('THUMB QUEUE SKIPPING (already exists): ' + element.fileName);
       done();
     })
     .catch(() => {
@@ -150,7 +152,10 @@ function thumbQueueRunner(element: ImageElement, done): void {
         GLOBALS.selectedSourceFolders[element.inputSource].path,
         screenshotOutputFolder,
         GLOBALS.screenshotSettings,
-        done
+        () => {
+          console.log('THUMB QUEUE FINISHED: ' + element.fileName);
+          done();
+        }
       );
     });
 }
@@ -182,6 +187,8 @@ function sendNewVideoMetadata(imageElement: ImageElementPlus): void {
  */
 export function metadataQueueRunner(file: TempMetadataQueueObject, done): void {
 
+  console.log('METADATA QUEUE STARTING: ' + file.name);
+
   if (metaExtractionStartTime === 0) {
     metaExtractionStartTime = performance.now();
   }
@@ -205,8 +212,10 @@ export function metadataQueueRunner(file: TempMetadataQueueObject, done): void {
       imageElement.inputSource = file.inputSource;
       imageElement.partialPath = file.partialPath;
       sendNewVideoMetadata(imageElement);
+      console.log('METADATA QUEUE FINISHED: ' + file.name);
       done();
     }, () => {
+      console.log('METADATA QUEUE FAILED: ' + file.name);
       done(); // error, just continue
     });
 

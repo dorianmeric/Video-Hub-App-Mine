@@ -59,11 +59,21 @@ export function extractFrameAtTimestamp(
 
     const ffmpegProcess = spawn(ffmpegPath, args);
 
+    const timeoutId = setTimeout(() => {
+      if (!ffmpegProcess.killed) {
+        console.warn(`FFmpeg extraction timed out for ${pathToVideo} at ${timestamp}s. Killing process...`);
+        ffmpegProcess.kill('SIGKILL');
+        resolve(false);
+      }
+    }, 15000); // 15 seconds timeout per frame
+
     ffmpegProcess.on('close', (code) => {
+      clearTimeout(timeoutId);
       resolve(code === 0);
     });
 
     ffmpegProcess.on('error', (err) => {
+      clearTimeout(timeoutId);
       console.error('FFmpeg error:', err);
       reject(err);
     });

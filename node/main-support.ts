@@ -466,10 +466,14 @@ export function extractMetadataAsync(
   return new Promise((resolve, reject) => {
     const ffprobeCommand = '"' + ffprobePath + '" -of json -show_streams -show_format -select_streams V "' + path.normalize(filePath) + '"';
 
-    exec(ffprobeCommand, (err, data, stderr) => {
+    console.log('EXTRACTING METADATA (ffprobe) STARTING: ' + filePath);
+
+    exec(ffprobeCommand, { timeout: 30000 }, (err, data, stderr) => {
       if (err) {
+        console.log('EXTRACTING METADATA (ffprobe) FAILED or TIMED OUT: ' + filePath);
         reject();
       } else {
+        console.log('EXTRACTING METADATA (ffprobe) FINISHED: ' + filePath);
         const metadata: ffprobeJSON = JSON.parse(data);
         const stream = getBestStream(metadata);
         const fileDuration = getFileDuration(metadata);
@@ -479,10 +483,13 @@ export function extractMetadataAsync(
         const origWidth = stream.width || 0; // ffprobe does not detect it on some MKV streams
         const origHeight = stream.height || 0;
 
+        console.log('EXTRACTING METADATA (stat) STARTING: ' + filePath);
         fs.stat(filePath, (err2, fileStat) => {
           if (err2) {
+            console.log('EXTRACTING METADATA (stat) FAILED: ' + filePath);
             reject();
           }
+          console.log('EXTRACTING METADATA (stat) FINISHED: ' + filePath);
 
           const imageElement = NewImageElement();
           imageElement.birthtime = Math.round(fileStat.birthtimeMs);
@@ -494,10 +501,12 @@ export function extractMetadataAsync(
             imageElement.width     = origWidth;
             imageElement.fps       = realFps;
  
+            console.log('EXTRACTING METADATA (hash) STARTING: ' + filePath);
             hashFileAsync(filePath, fileStat).then((hash) => {
+              console.log('EXTRACTING METADATA (hash) FINISHED: ' + filePath);
               imageElement.hash = hash;
               resolve(imageElement);
- 
+  
               // --- Background processing for visual similarity ---
               Promise.resolve().then(async () => {
                 const tempKeyframeDir = path.join(
@@ -506,27 +515,34 @@ export function extractMetadataAsync(
                   imageElement.hash
                 );
 
+                console.log(`VISUAL SIMILARITY INDEXING STARTING: ${imageElement.fileName}`);
                 const keyframes = await extractKeyframesForVisualSimilarity(
                   filePath,
                   tempKeyframeDir,
                   5 // Extract a keyframe every 5 seconds
                 );
 
-                for (const keyframe of keyframes) {
+                console.log(`VISUAL SIMILARITY INDEXING (keyframes extracted): ${imageElement.fileName}, Count: ${keyframes.length}`);
+
+                for (let i = 0; i < keyframes.length; i++) {
+                  const keyframe = keyframes[i];
                   const perceptualHash = await generatePerceptualHash(keyframe.path);
                   visualSimilarityIndex.addClip(BigInt('0b' + perceptualHash), {
                     videoId: imageElement.hash,
                     timestamp: keyframe.timestamp,
                     keyframePath: keyframe.path,
                   });
+                  if (i % 10 === 0) {
+                    console.log(`VISUAL SIMILARITY INDEXING PROGRESS: ${imageElement.fileName}, ${i}/${keyframes.length}`);
+                  }
                 }
                 // Clean up temporary keyframe directory
                 fs.rmSync(tempKeyframeDir, { recursive: true, force: true });
-                console.log(`Indexed ${keyframes.length} clips for ${imageElement.fileName}`);
+                console.log(`VISUAL SIMILARITY INDEXING FINISHED: ${imageElement.fileName}, Indexed ${keyframes.length} clips`);
               }).catch(err => console.error(`Error during background indexing for ${imageElement.fileName}:`, err));
               // --- End background processing for visual similarity ---
             });
- 
+  
           });
 
       }
