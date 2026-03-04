@@ -419,7 +419,10 @@ function hashFileAsync(pathToFile: string, stats: Stats): Promise<string> {
       fs.readFile(pathToFile, (err, data2) => {
         if (err) { throw err; }
         // append the file size to the data
-        const buf = Buffer.concat([data2, Buffer.from(fileSize.toString())]);
+        const sizeBuf = Buffer.from(fileSize.toString());
+        const buf = Buffer.alloc(data2.length + sizeBuf.length);
+        buf.set(data2, 0);
+        buf.set(sizeBuf, data2.length);
         // make the magic happen!
         const hash = hasher('md5').update(buf.toString('hex')).digest('hex');
         resolve(hash);
@@ -432,7 +435,10 @@ function hashFileAsync(pathToFile: string, stats: Stats): Promise<string> {
             fs.read(fd, data, sampleSize * 2, sampleSize, fileSize - sampleSize, (err4, bytesRead3, buffer3) => {
               fs.close(fd, (err5) => {
                 // append the file size to the data
-                const buf = Buffer.concat([data, Buffer.from(fileSize.toString())]);
+                const sizeBuf = Buffer.from(fileSize.toString());
+                const buf = Buffer.alloc(data.length + sizeBuf.length);
+                buf.set(data, 0);
+                buf.set(sizeBuf, data.length);
                 // make the magic happen!
                 const hash = hasher('md5').update(buf.toString('hex')).digest('hex');
                 resolve(hash);

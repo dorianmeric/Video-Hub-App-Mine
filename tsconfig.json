@@ -3,18 +3,21 @@
   "angularCompilerOptions": {
     "strictTemplates": false
   },
-  "compilerOptions": {
+"compilerOptions": {
     "baseUrl": "",
     "declaration": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "lib": [
       "es2022",
       "dom"
     ],
     "module": "esnext",
-    "moduleResolution": "node",
+"moduleResolution": "node",
     "outDir": "./dist/out-tsc",
     "removeComments": true,
+    "skipLibCheck": true,
     "sourceMap": true,
     "target": "es2022",
     "typeRoots": [
