@@ -1,4 +1,3 @@
-import sharp from 'sharp';
 import phash from 'sharp-phash';
 import * as fs from 'fs';
 
@@ -18,9 +17,8 @@ export async function generatePerceptualHash(imagePath: string): Promise<string 
       console.warn(`Image file is empty: ${imagePath}`);
       return null;
     }
-    const imageBuffer = await sharp(imagePath).raw().toBuffer();
-    // phash expects the buffer directly, not the sharp instance
-    const hash = await phash(imageBuffer);
+    // sharp-phash can take a file path directly and handles the sharp processing internally
+    const hash = await phash(imagePath);
     return hash;
   } catch (error) {
     console.error(`Error generating perceptual hash for ${imagePath}:`, error);
